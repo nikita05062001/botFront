@@ -8,6 +8,9 @@ body {
   color: var(--tg-theme-text-color);
   max-width: 420px;
 }
+.body {
+  background-color: var(--tg-theme-secondary-bg-color);
+}
 .App {
   margin: 0 auto;
   padding: 10px 20px;

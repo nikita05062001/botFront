@@ -15,8 +15,10 @@ const App = () => {
     <div className="App">
       <Header />
 
-      <MenuSelect stateMenu={setMenu} />
-      {menu === "1" ? <ComandList /> : ""}
+      <div className="body">
+        <MenuSelect stateMenu={setMenu} />
+        {menu === "1" ? <ComandList /> : ""}
+      </div>
     </div>
     // <button onClick={onToggleButton}>toggle</button>
   );
