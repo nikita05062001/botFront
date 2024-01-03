@@ -6,7 +6,7 @@ import MenuSelect from "./components/MenuSelect/MenuSelect";
 import ComandList from "./components/ComandList/ComandList";
 
 const App = () => {
-  const { tg, onToggleButton } = useTelegram();
+  const { tg } = useTelegram();
   useEffect(() => {
     tg.ready();
   }, []);
@@ -14,10 +14,11 @@ const App = () => {
   return (
     <div className="App">
       <Header />
-      <button onClick={onToggleButton}>toggle</button>
+
       <MenuSelect stateMenu={setMenu} />
       {menu === "1" ? <ComandList /> : ""}
     </div>
+    // <button onClick={onToggleButton}>toggle</button>
   );
 };
 
