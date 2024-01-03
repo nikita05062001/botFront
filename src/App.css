@@ -4,8 +4,9 @@
   box-sizing: border-box;
 }
 body {
-  background: var(--tg-theme-bg-color);
+  background: var(--tg-theme-secondary-bg-color);
   color: var(--tg-theme-text-color);
+  max-width: 420px;
 }
 .App {
   margin: 0 auto;
