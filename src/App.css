@@ -9,6 +9,8 @@ body {
   max-width: 420px;
 }
 .body {
+  padding: 15px;
+  border-radius: 20px;
   background-color: var(--tg-theme-secondary-bg-color);
 }
 .App {
