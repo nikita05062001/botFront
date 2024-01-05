@@ -1,0 +1,16 @@
+.authorization {
+  &-content {
+    margin-left: 20px;
+    text-align: center;
+    &-title {
+    }
+    &-body {
+      &-input {
+        margin-top: 20px;
+        border: 1px solid rgb(16, 214, 65);
+        padding: 5px 10px;
+        border-radius: 10px;
+      }
+    }
+  }
+}

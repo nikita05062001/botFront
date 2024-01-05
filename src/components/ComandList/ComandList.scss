@@ -1,9 +1,12 @@
 .list {
+  margin-top: 10px;
+  margin-left: 5px;
   background-color: var(--tg-theme-secondary-bg-color);
   &-content {
     ul {
       list-style: none;
       li {
+        margin-top: 10px;
       }
     }
   }
