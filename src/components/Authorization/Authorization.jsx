@@ -15,6 +15,7 @@ const Authorization = () => {
           <input
             className="authorization-content-body-input"
             placeholder="пароль"
+            type="password"
           ></input>
         </div>
       </div>
