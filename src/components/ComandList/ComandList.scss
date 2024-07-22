@@ -2,15 +2,34 @@
   margin-top: 10px;
   margin-left: 5px;
   background-color: var(--tg-theme-secondary-bg-color);
+  &-input{
+    input{
+      width: 100%;
+    }
+  }
   &-content {
     ul {
       list-style: none;
       li {
         margin-top: 10px;
-        padding: 10px;
-        padding-top: 0;
+
         border-radius: 20px;
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-between;
       }
+    }
+  }
+  &-content {
+    width: 100%;
+    &-title{
+      width: 85%;
+      padding-right: 15px;
+    }
+    &-count{
+      width: 15%;
+      display: flex;
+      justify-content: space-between;
     }
   }
 }

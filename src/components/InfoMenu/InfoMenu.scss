@@ -1,0 +1,41 @@
+.infoMenu{
+    &-exit{
+        position: fixed;
+        right: 0;
+        top: 0; 
+        z-index: 100;
+    }
+    &-content{
+        height: 100%;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        position: fixed;
+        left: 0;
+        top: 0;
+        &-window{
+            position: fixed;
+            height: 80%;
+            width: 80%; 
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            background-color: white;
+            border-radius: 20px;
+            overflow-y: scroll;
+        &-item{
+            padding: 10px;
+            padding-top: 0;
+            &:nth-child(even){
+                background-color: gainsboro;
+            }
+           &-title{
+            margin: 0 auto;
+            text-align: center;
+           }
+           &-value{
+            text-align: center;
+           }
+        }
+        }
+    }
+}
