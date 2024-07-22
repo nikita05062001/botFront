@@ -6,6 +6,7 @@ import MenuSelect from "./components/MenuSelect/MenuSelect";
 import ComandList from "./components/ComandList/ComandList";
 import Authorization from "./components/Authorization/Authorization";
 
+
 const App = () => {
   const { tg } = useTelegram();
   useEffect(() => {
