@@ -4,8 +4,6 @@ import axios from "axios";
 //@ts-ignore
 import InfoMenu from "../InfoMenu/InfoMenu.jsx";
 
-// import { List } from  '../../api/getList';
-
 const ComandList = () => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,7 +16,12 @@ const ComandList = () => {
         const response = await axios.get(
           "https://script.google.com/macros/s/AKfycbzcFkt--B7LRQO17fXLw0_wqZ4RO0FtTr9qqWo5VDw0wZrbJnA4n6k8VGsUBzFMgH_P/exec"
         );
-        setList(response.data);
+
+        const filteredItems = response.data.list.filter((item, index, self) =>
+          index === self.findIndex(t => t.Наименование === item.Наименование)
+        );
+
+        setList(filteredItems);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -27,29 +30,31 @@ const ComandList = () => {
     };
     fetchList();
   }, []);
+
   const handleTitleClick = (el) => {
     setSelectedElement(el);
   };
-  console.log(list.list);
+
   return (
     <div className="list">
-       
       <div className="list-input">
         <input type="text" />
       </div>
       <div className="list-content">
-    
         <ul>
           <li>
             <div className="list-content-title">Наименование</div>
             <div className="list-content-count">Кол-во</div>
           </li>
           {!loading ? (
-            list.list.map((el, index) => (
+            list.map((el, index) => (
               <li key={index}>
-                <div className="list-content-title" onClick={() => {
-                  handleTitleClick(el)
-                }}>{el.Наименование}</div>
+                <div
+                  className="list-content-title"
+                  onClick={() => handleTitleClick(el)}
+                >
+                  {el.Наименование}
+                </div>
                 <div className="list-content-count">
                   <div className="list-content-count-minus">-</div>
                   <div className="list-content-count-value">0</div>
