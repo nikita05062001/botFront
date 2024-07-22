@@ -19,14 +19,17 @@
             left: 50%;
             top: 50%;
             transform: translate(-50%,-50%);
-            background-color: white;
+            background-color: var(bg_color);
             border-radius: 20px;
             overflow-y: scroll;
         &-item{
             padding: 10px;
             padding-top: 0;
             &:nth-child(even){
-                background-color: gainsboro;
+                background-color: var(secondary_bg_color);
+            }
+            p{
+                color: var(text_color);
             }
            &-title{
             margin: 0 auto;
