@@ -16,7 +16,7 @@ const ComandList = () => {
     cat3: ""
   });
   const [filteredData, setFilteredData] = useState([]);
-  const categories = {}
+  const [categories, setCategories] = useState({});
 
   useEffect(() => {
     const fetchList = async () => {
@@ -39,33 +39,33 @@ const ComandList = () => {
     fetchList();
   }, []);
 
-
   useEffect(() => {
     if (!loading) {
+      const tempCategories = {};
+
       list.forEach((el) => {
-        if (!categories[el["Категория 1"]]) {
-          categories[el["Категория 1"]] = {};
+        if (!tempCategories[el["Категория 1"]]) {
+          tempCategories[el["Категория 1"]] = {};
         }
-  
-        if (!categories[el["Категория 1"]][el["Категория 2"]]) {
-          categories[el["Категория 1"]][el["Категория 2"]] = [];
+
+        if (!tempCategories[el["Категория 1"]][el["Категория 2"]]) {
+          tempCategories[el["Категория 1"]][el["Категория 2"]] = [];
         }
-  
-        // Добавляем значение, если оно не пустое
+
         if (el["Категория 3"].trim() !== "") {
-          categories[el["Категория 1"]][el["Категория 2"]].push(el["Категория 3"]);
+          tempCategories[el["Категория 1"]][el["Категория 2"]].push(el["Категория 3"]);
         }
       });
-  
+
       // Удаляем пустые строки и дубликаты из массивов
-      Object.keys(categories).forEach(category1Key => {
-        Object.keys(categories[category1Key]).forEach(category2Key => {
-          categories[category1Key][category2Key] = Array.from(new Set(categories[category1Key][category2Key]))
+      Object.keys(tempCategories).forEach(category1Key => {
+        Object.keys(tempCategories[category1Key]).forEach(category2Key => {
+          tempCategories[category1Key][category2Key] = Array.from(new Set(tempCategories[category1Key][category2Key]))
             .filter(item => item.trim() !== "");
         });
       });
-  
-      console.log(categories);
+
+      setCategories(tempCategories);
     }
   }, [loading, list]);
 
@@ -75,7 +75,7 @@ const ComandList = () => {
         const searchMatch = item?.Наименование.toLowerCase().includes(filters.search.toLowerCase());
         const cat1Match = filters.cat1 ? item["Категория 1"] === filters.cat1 : true;
         const cat2Match = filters.cat2 ? item["Категория 2"] === filters.cat2 : true;
-        const cat3Match = filters.cat3 ? item["Категория 3"] === filters.cat3 : true; // Возможно, ошибка в вашем коде: здесь должно быть category3
+        const cat3Match = filters.cat3 ? item["Категория 3"] === filters.cat3 : true;
         return searchMatch && cat1Match && cat2Match && cat3Match;
       });
       setFilteredData(newFilteredData);
@@ -86,14 +86,68 @@ const ComandList = () => {
     setSelectedElement(el);
   };
 
+  const handleCategoryChange = (level, value) => {
+    const newFilters = { ...filters, [`cat${level}`]: value };
+
+    // Reset filters at higher levels
+    for (let i = level + 1; i <= 3; i++) {
+      newFilters[`cat${i}`] = "";
+    }
+
+    setFilters(newFilters);
+  };
+
+  const getCategoryOptions = (level) => {
+    if (level === 1) {
+      return Object.keys(categories);
+    } else if (level === 2 && filters.cat1) {
+      return Object.keys(categories[filters.cat1] || {});
+    } else if (level === 3 && filters.cat2 && filters.cat1) {
+      return categories[filters.cat1][filters.cat2] || [];
+    }
+    return [];
+  };
+
   return (
     <div className="list">
       <div className="list-input">
-        <input type="text"  value={filters.search} onChange={(e) =>{
-          const newObj = {...filters, search: e.target.value};
+        <input type="text" value={filters.search} onChange={(e) => {
+          const newObj = { ...filters, search: e.target.value };
           setFilters(newObj);
         }} />
-        {/* <img src="https://i.imgur.com/j10HQx7.jpg" alt="test" /> */}
+      </div>
+      <div className="list-filters">
+        <select
+          value={filters.cat1}
+          onChange={(e) => handleCategoryChange(1, e.target.value)}
+        >
+          <option value="">Выберите Категорию 1</option>
+          {getCategoryOptions(1).map((option, index) => (
+            <option key={index} value={option}>{option}</option>
+          ))}
+        </select>
+
+        <select
+          value={filters.cat2}
+          onChange={(e) => handleCategoryChange(2, e.target.value)}
+          disabled={!filters.cat1}
+        >
+          <option value="">Выберите Категорию 2</option>
+          {getCategoryOptions(2).map((option, index) => (
+            <option key={index} value={option}>{option}</option>
+          ))}
+        </select>
+
+        <select
+          value={filters.cat3}
+          onChange={(e) => handleCategoryChange(3, e.target.value)}
+          disabled={!filters.cat2}
+        >
+          <option value="">Выберите Категорию 3</option>
+          {getCategoryOptions(3).map((option, index) => (
+            <option key={index} value={option}>{option}</option>
+          ))}
+        </select>
       </div>
       <div className="list-content">
         <ul>
@@ -102,7 +156,7 @@ const ComandList = () => {
             <div className="list-content-count">Кол-во</div>
           </li>
           {!loading ? (
-            filteredData.map((el, index) => ( // Использование filteredData вместо list
+            filteredData.map((el, index) => (
               <li key={index}>
                 <div
                   className="list-content-title"
