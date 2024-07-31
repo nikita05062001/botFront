@@ -4,6 +4,9 @@
         right: 0;
         top: 0; 
         z-index: 100;
+        svg{
+            width: 16px;
+        }
     }
     &-content{
         height: 100%;
@@ -14,17 +17,19 @@
         top: 0;
         &-window{
             position: fixed;
-            height: 80%;
-            width: 80%; 
+            height: 100%;
+            width: 100%; 
             left: 50%;
             top: 50%;
             transform: translate(-50%,-50%);
             background-color: var(--tg-theme-button-color);
             border-radius: 20px;
-            overflow-y: scroll;
         &-item{
             padding: 10px;
             padding-top: 0;
+            &:first-child{
+                padding: 10px 0;
+            }
             &:nth-child(even){
                 background-color: var(--tg-theme-hint-color);
             }
