@@ -7,11 +7,12 @@ const InfoMenu = ({element, setState}) => {
     const array = Object.entries(element);
   return (
     <div className='infoMenu'>
-        <div className='infoMenu-exit' onClick={() => {
-            setState(null)
-        }}><SvgExit fill={"aqua"} /></div>
+        
          <div className='infoMenu-content'>
             <div className='infoMenu-content-window'>
+            <div className='infoMenu-exit' onClick={() => {
+            setState(null)
+        }}><SvgExit fill={"aqua"} /></div>
                 {/* {
                     array.map((obj) => (
                         <div className='infoMenu-content-window-item' key={obj[0]}>
