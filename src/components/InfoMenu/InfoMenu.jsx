@@ -3,15 +3,16 @@ import './InfoMenu.scss';
 import SvgExit from '../../svg/exit/SvgExit';
 
 const InfoMenu = ({element, setState}) => {
+    console.log(element["Наименование"])
     const array = Object.entries(element);
   return (
     <div className='infoMenu'>
         <div className='infoMenu-exit' onClick={() => {
             setState(null)
-        }}><SvgExit fill={"red"} /></div>
+        }}><SvgExit fill={"aqua"} /></div>
          <div className='infoMenu-content'>
             <div className='infoMenu-content-window'>
-                {
+                {/* {
                     array.map((obj) => (
                         <div className='infoMenu-content-window-item' key={obj[0]}>
                         <div className='infoMenu-content-window-item-title'>
@@ -22,15 +23,44 @@ const InfoMenu = ({element, setState}) => {
                         </div>
                     </div>
                     ))
-                }
-                {/* <div className='infoMenu-content-window-item'>
+                } */}
+                <div className='infoMenu-content-window-item'>
                     <div className='infoMenu-content-window-item-title'>
-                    <p>Название</p>
+                    <p>{element["Наименование"]}</p>
                     </div>
-                    <div className='infoMenu-content-window-item-value'>
-                    <p>Усилёк</p>   
+                </div>
+                <div className='infoMenu-content-window-item'>
+                    <div className='infoMenu-content-window-item-img'>
+                    <img src={element["Изображения"]} alt='????' />
                     </div>
-                </div> */}
+                </div>
+                <div className='infoMenu-content-window-item'>
+                    <div className='infoMenu-content-window-item-title'>
+                    <p>Модель: {element["Модель"]}</p>
+                    </div>
+                </div>
+                <div className='infoMenu-content-window-item'>
+                    <div className='infoMenu-content-window-item-title'>
+                    <p>Производитель: {element["Производитель"]}</p>
+                    </div>
+                </div>
+                <div className='infoMenu-content-window-item'>
+                    <div className='infoMenu-content-window-item-title'>
+                    <p>Оценочная стоимость: {element["Оценочная стоимость"]}$</p>
+                    </div>
+                </div>
+                <div className='infoMenu-content-window-item'>
+                    <div className='infoMenu-content-window-item-title'>
+                    <p>Стоимость: {element["Стоимость"]}$</p>
+                    </div>
+                </div>
+                <div className='infoMenu-content-window-item'>
+                    <div className='infoMenu-content-window-item-change'>
+                    <p className='infoMenu-content-window-item-change-minus'>-</p>
+                    <p className='infoMenu-content-window-item-change-value'>0</p>
+                    <p className='infoMenu-content-window-item-change-minus'>+</p>
+                    </div>
+                </div>
             </div>
          </div>
     </div>
