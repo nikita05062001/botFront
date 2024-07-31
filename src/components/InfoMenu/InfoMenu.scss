@@ -17,7 +17,7 @@
         top: 0;
         &-window{
             position: fixed;
-            height: 100%;
+            height: max-content;
             width: 100%; 
             left: 50%;
             top: 50%;
