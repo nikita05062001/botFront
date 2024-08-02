@@ -1,18 +1,34 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const eqipSlice = createSlice({
-  name: 'example',
-  initialState: { value: 0 },
+  name: 'equip',
+  initialState: {},
   reducers: {
-    increment: (state) => {
-      state.value += 1;
+    changeEquipMinus: (state, action) => {
+      const item = state[action.payload["№"]];
+      if (item) {
+        if (item.count) {
+          if (item.count === 1) {
+            delete state[action.payload["№"]];
+          } else {
+            item.count -= 1;
+          }
+        }
+      }
     },
-    decrement: (state) => {
-      state.value -= 1;
+    changeEquipPlus: (state, action) => {
+      const item = state[action.payload["№"]];
+      if (item) {
+        if (item.count !== undefined) {
+          item.count += 1;
+        }
+      } else {
+        state[action.payload["№"]] = { ...action.payload, count: 1 };
+      }
     },
   },
 });
 
-export const { increment, decrement } = eqipSlice.actions;
+export const { changeEquipMinus, changeEquipPlus } = eqipSlice.actions;
 
 export default eqipSlice.reducer;

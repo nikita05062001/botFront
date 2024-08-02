@@ -3,6 +3,8 @@ import "./ComandList.scss";
 import axios from "axios";
 //@ts-ignore
 import InfoMenu from "../InfoMenu/InfoMenu.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import { changeEquipMinus, changeEquipPlus } from "../../redux/eqipReducer.js";
 
 const ComandList = () => {
   const [list, setList] = useState([]);
@@ -17,6 +19,10 @@ const ComandList = () => {
   });
   const [filteredData, setFilteredData] = useState([]);
   const [categories, setCategories] = useState({});
+
+  const dispatch = useDispatch();
+  const value = useSelector((state) => state.equip);
+  
 
   useEffect(() => {
     const fetchList = async () => {
@@ -164,10 +170,12 @@ const ComandList = () => {
                 >
                   {el.Наименование}
                 </div>
-                <div className="list-content-count">
-                  <div className="list-content-count-minus">-</div>
-                  <div className="list-content-count-value">0</div>
-                  <div className="list-content-count-minus">+</div>
+                    <div className="list-content-count">
+                    <div className="list-content-count-minus" onClick={() => dispatch(changeEquipMinus(el))}>-</div>
+                    <div className="list-content-count-value">
+                    {(value && value[el["№"]] && value[el["№"]].count !== undefined) ? value[el["№"]].count : 0}
+                    </div>
+                    <div className="list-content-count-plus" onClick={() => dispatch(changeEquipPlus(el))}>+</div>
                 </div>
               </li>
             ))
