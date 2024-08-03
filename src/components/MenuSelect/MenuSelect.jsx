@@ -1,4 +1,5 @@
 import "./MenuSelect.scss";
+import { Link } from "react-router-dom";
 
 const MenuSelect = ({ stateMenu }) => {
   const handleItemClick = (value) => {
@@ -11,8 +12,9 @@ const MenuSelect = ({ stateMenu }) => {
         <div className="menu-content-list">
           <ul>
             <li onClick={() => handleItemClick("1")}>Команды</li>
-            <li onClick={() => handleItemClick("2")}>Авторизация</li>
-            <li onClick={() => handleItemClick("3")}>О нас</li>
+            <Link to='/document'>
+            <li>Оформить</li>
+            </Link>
           </ul>
         </div>
       </div>
