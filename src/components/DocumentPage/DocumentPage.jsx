@@ -2,9 +2,9 @@ import React, { useRef, useEffect } from 'react';
 import WebViewer from '@pdftron/webviewer';
 import './DocumentPage.scss';
 
-const DocumentPage = () => {
+const DocumentPage = ({ chatId }) => {
   const viewer = useRef(null);
-  const instanceRef = useRef(null); // Ссылка для хранения экземпляра WebViewer
+  const instanceRef = useRef(null);
 
   const jsonData = {
     date: 'Test',
@@ -16,7 +16,8 @@ const DocumentPage = () => {
     price_service: '34000',
     price_all: '200000',
     items_equip: {
-      insert_rows:[["1", "ev66", "усилек", "2", '28000', '56000'],["1", "ev66", "усилек", "2", '28000', '56000']]}
+      insert_rows:[["1", "ev66", "усилек", "2", '28000', '56000'],["1", "ev66", "усилек", "2", '28000', '56000']]
+    }
   };
 
   useEffect(() => {
@@ -44,21 +45,28 @@ const DocumentPage = () => {
     });
   }, []);
 
-  const saveAsDocx = async () => {
+  const saveAndSendDocx = async () => {
     if (instanceRef.current) {
       const { documentViewer } = instanceRef.current.Core;
       const doc = documentViewer.getDocument();
       
       try {
         const docxArrayBuffer = await doc.saveDocument('docx');
-        const blob = new Blob([docxArrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'document.docx';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        const base64String = btoa(String.fromCharCode(...new Uint8Array(docxArrayBuffer)));
+        
+        const response = await fetch('http://localhost:3001/save-docx', {  // Изменено на порт 3001
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ fileContent: base64String, chatId }),
+        });
+
+        if (response.ok) {
+          console.log('File sent successfully');
+        } else {
+          console.error('Error sending file');
+        }
       } catch (error) {
         console.error('Error saving document:', error);
       }
@@ -69,7 +77,7 @@ const DocumentPage = () => {
     <div className="App">
       <div className="header">React sample</div>
       <div className="webviewer" ref={viewer} style={{ height: '90vh' }}></div>
-      <button onClick={saveAsDocx} style={{ marginTop: '20px' }}>Save as DOCX</button>
+      <button onClick={saveAndSendDocx}>Save and Send as DOCX</button>
     </div>
   );
 };
