@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import WebViewer from '@pdftron/webviewer';
 import { saveAs } from 'file-saver';
 import './DocumentPage.scss';
@@ -25,6 +25,9 @@ const DocumentPage = () => {
       ]
     }
   };
+
+  const [loading, setLoading] = useState(true)
+  const [showLoad, setShowLoad] = useState(false)
 
   useEffect(() => {
     WebViewer(
@@ -80,6 +83,7 @@ const DocumentPage = () => {
         });
   
         if (response.ok) {
+          setLoading(false)
           console.log('File sent to Telegram successfully');
         } else {
           const errorText = await response.text();
@@ -93,7 +97,11 @@ const DocumentPage = () => {
 
   return (
     <div className="App">
-       <p onClick={saveAndSendPdf} onTouchStart={saveAndSendPdf} onTouchEnd={saveAndSendPdf}>Save and Send as PDF</p>
+       <p onClick={() => {
+        saveAndSendPdf()
+        setShowLoad(true)
+       }} onTouchStart={saveAndSendPdf} onTouchEnd={saveAndSendPdf}>Save and Send as PDF</p>
+      {showLoad ? <p>{loading ? "пошла загрузка" : "завершено"}</p> : ""} 
       <div className="webviewer" ref={viewer} style={{ height: '90vh' }}></div>
     </div>
   );
