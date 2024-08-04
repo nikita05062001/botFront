@@ -93,7 +93,10 @@ const DocumentPage = () => {
 
   return (
     <div className="App">
-       <p onClick={saveAndSendPdf}>Save and Send as PDF</p>
+       <p onClick={() => {
+        saveAndSendPdf()
+        console.log('TEST')
+       }} onTouchStart={saveAndSendPdf} onTouchEnd={saveAndSendPdf}>Save and Send as PDF</p>
       <div className="webviewer" ref={viewer} style={{ height: '90vh' }}></div>
     </div>
   );
