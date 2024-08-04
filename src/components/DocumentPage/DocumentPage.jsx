@@ -93,9 +93,8 @@ const DocumentPage = () => {
 
   return (
     <div className="App">
-      <div className="header">React sample</div>
+       <p onClick={saveAndSendPdf}>Save and Send as PDF</p>
       <div className="webviewer" ref={viewer} style={{ height: '90vh' }}></div>
-      <button onClick={saveAndSendPdf}>Save and Send as PDF</button>
     </div>
   );
 };
