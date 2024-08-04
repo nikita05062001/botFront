@@ -66,24 +66,24 @@ const DocumentPage = () => {
         // Create a Blob from ArrayBuffer
         const pdfBlob = new Blob([pdfArrayBuffer], { type: 'application/pdf' });
   
-        // Send the PDF Blob to the server
+        // Create a FormData object
         const formData = new FormData();
-        formData.append('file', pdfBlob, 'document.pdf');
-        formData.append('chatId', user?.id || '989985866');
+        formData.append('document', pdfBlob, 'document.pdf');
   
-        for (const pair of formData.entries()) {
-          console.log(pair[0], pair[1]);
-        }
+        // Construct the URL with the bot token and chat ID
+        const url = `https://api.telegram.org/bot7170153136:AAFxOfSKrht_OzuVyZmomixX4KoHdefSWx8/sendDocument?chat_id=${user?.id || '989985866'}`;
   
-        const response = await fetch('http://localhost:3001/upload', {
+        // Send the document to Telegram
+        const response = await fetch(url, {
           method: 'POST',
           body: formData,
         });
   
         if (response.ok) {
-          console.log('File sent to server successfully');
+          console.log('File sent to Telegram successfully');
         } else {
-          console.error('Error sending file to server:', response.statusText);
+          const errorText = await response.text();
+          console.error('Error sending file to Telegram:', response.statusText, errorText);
         }
       } catch (error) {
         console.error('Error generating PDF:', error);
@@ -93,10 +93,7 @@ const DocumentPage = () => {
 
   return (
     <div className="App">
-       <p onClick={() => {
-        saveAndSendPdf()
-        console.log('TEST')
-       }} onTouchStart={saveAndSendPdf} onTouchEnd={saveAndSendPdf}>Save and Send as PDF</p>
+       <p onClick={saveAndSendPdf} onTouchStart={saveAndSendPdf} onTouchEnd={saveAndSendPdf}>Save and Send as PDF</p>
       <div className="webviewer" ref={viewer} style={{ height: '90vh' }}></div>
     </div>
   );
