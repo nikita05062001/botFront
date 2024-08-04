@@ -28,6 +28,7 @@ const DocumentPage = () => {
 
   const [loading, setLoading] = useState(true)
   const [showLoad, setShowLoad] = useState(false)
+  const [status, setStatus] = useState('запустите')
 
   useEffect(() => {
     WebViewer(
@@ -85,11 +86,14 @@ const DocumentPage = () => {
         if (response.ok) {
           setLoading(false)
           console.log('File sent to Telegram successfully');
+          setStatus('успешно')
         } else {
           const errorText = await response.text();
+          setStatus(errorText)
           console.error('Error sending file to Telegram:', response.statusText, errorText);
         }
       } catch (error) {
+        setStatus(error)
         console.error('Error generating PDF:', error);
       }
     }
@@ -102,6 +106,7 @@ const DocumentPage = () => {
         setShowLoad(true)
        }} onTouchStart={saveAndSendPdf} onTouchEnd={saveAndSendPdf}>Save and Send as PDF</p>
       {showLoad ? <p>{loading ? "пошла загрузка" : "завершено"}</p> : ""} 
+      <p>{status}</p>
       <div className="webviewer" ref={viewer} style={{ height: '90vh' }}></div>
     </div>
   );
