@@ -3,8 +3,7 @@ import Button from "../Button/Button";
 import { useTelegram } from "../../hooks/useTelegram";
 import "./Header.scss";
 const Header = () => {
-  const { tg, user, onClose } = useTelegram();
-  console.log(user)
+  const { user, onClose } = useTelegram();
   return (
     <div className="header">
       

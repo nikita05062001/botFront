@@ -2,11 +2,13 @@ import React, { useRef, useEffect } from 'react';
 import WebViewer from '@pdftron/webviewer';
 import { saveAs } from 'file-saver';
 import './DocumentPage.scss';
+import { useTelegram } from '../../hooks/useTelegram';
 
-const DocumentPage = ({ chatId }) => {
+
+const DocumentPage = () => {
   const viewer = useRef(null);
   const instanceRef = useRef(null);
-
+  const { user } = useTelegram();
   const jsonData = {
     date: 'Test',
     title: 'Test',
@@ -67,7 +69,7 @@ const DocumentPage = ({ chatId }) => {
         // Send the PDF Blob to the server
         const formData = new FormData();
         formData.append('file', pdfBlob, 'document.pdf');
-        formData.append('chatId', chatId);
+        formData.append('chatId', user?.id || '989985866');
   
         for (const pair of formData.entries()) {
           console.log(pair[0], pair[1]);
