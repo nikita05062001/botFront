@@ -49,27 +49,42 @@ const DocumentPage = ({ chatId }) => {
     });
   }, []);
 
-  const saveAndSendDocx = async () => {
+  const saveAndSendPdf = async () => {
     if (instanceRef.current) {
       const { documentViewer } = instanceRef.current.Core;
       const doc = documentViewer.getDocument();
-
+  
       try {
-        // Ожидание для применения всех значений шаблона
-        await new Promise(resolve => setTimeout(resolve, 2000)); // 2 секунды задержки
-
-        // Получите данные документа в формате ArrayBuffer
-        const docArrayBuffer = await doc.getFileData({ downloadType: 'docx' });
-        
-        // Создайте Blob из ArrayBuffer
-        const docBlob = new Blob([docArrayBuffer], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-
-        // Используйте file-saver для сохранения файла
-        saveAs(docBlob, 'document.docx');
-        
-        console.log('File saved successfully');
+        // Wait for all template values to be applied
+        await new Promise(resolve => setTimeout(resolve, 2000)); // 2 seconds delay
+  
+        // Get PDF data
+        const pdfArrayBuffer = await doc.getFileData({ downloadType: 'pdf' });
+  
+        // Create a Blob from ArrayBuffer
+        const pdfBlob = new Blob([pdfArrayBuffer], { type: 'application/pdf' });
+  
+        // Send the PDF Blob to the server
+        const formData = new FormData();
+        formData.append('file', pdfBlob, 'document.pdf');
+        formData.append('chatId', chatId);
+  
+        for (const pair of formData.entries()) {
+          console.log(pair[0], pair[1]);
+        }
+  
+        const response = await fetch('http://localhost:3001/upload', {
+          method: 'POST',
+          body: formData,
+        });
+  
+        if (response.ok) {
+          console.log('File sent to server successfully');
+        } else {
+          console.error('Error sending file to server:', response.statusText);
+        }
       } catch (error) {
-        console.error('Error saving document:', error);
+        console.error('Error generating PDF:', error);
       }
     }
   };
@@ -78,7 +93,7 @@ const DocumentPage = ({ chatId }) => {
     <div className="App">
       <div className="header">React sample</div>
       <div className="webviewer" ref={viewer} style={{ height: '90vh' }}></div>
-      <button onClick={saveAndSendDocx}>Save and Download as DOCX</button>
+      <button onClick={saveAndSendPdf}>Save and Send as PDF</button>
     </div>
   );
 };
