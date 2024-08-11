@@ -1,15 +1,16 @@
 import React, { useRef, useEffect, useState } from "react";
 import { PDFDownloadLink, pdf } from "@react-pdf/renderer";
 import { useTelegram } from "../../hooks/useTelegram";
-
+import { useSelector } from "react-redux";
 import PDFFile from "../PdfFile/PDFFile";
 
 const DocumentPage = () => {
   const { user } = useTelegram();
+  const items = useSelector((state) => state.equip);
+  console.log(items);
   const sendPdfToTelegram = async (pdfBlob) => {
     const formData = new FormData();
     formData.append("document", pdfBlob, "document.pdf");
-
     const url = `https://api.telegram.org/bot7170153136:AAFxOfSKrht_OzuVyZmomixX4KoHdefSWx8/sendDocument?chat_id=${
       user?.id || "989985866"
     }`;
@@ -38,7 +39,7 @@ const DocumentPage = () => {
   const handleDownloadAndSend = async () => {
     try {
       // Генерируем PDF-файл
-      const blob = await pdf(<PDFFile />).toBlob();
+      const blob = await pdf(<PDFFile value={items} />).toBlob();
       // Отправляем PDF в Telegram
       await sendPdfToTelegram(blob);
     } catch (error) {
@@ -51,7 +52,7 @@ const DocumentPage = () => {
       {/* <PDFDownloadLink document={<PDFFile />} filename="FORM">
       {({loading}) => (loading ? <button>Loading Document...</button> : <button>Download</button> )}
       </PDFDownloadLink> */}
-      <PDFFile />
+      {/* <PDFFile value={items} /> */}
     </div>
   );
 };
