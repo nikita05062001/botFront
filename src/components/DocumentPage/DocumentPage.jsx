@@ -3,6 +3,7 @@ import { PDFDownloadLink, pdf } from "@react-pdf/renderer";
 import { useTelegram } from "../../hooks/useTelegram";
 import { useSelector } from "react-redux";
 import PDFFile from "../PdfFile/PDFFile";
+import { Link } from "react-router-dom";
 
 const DocumentPage = () => {
   const { user } = useTelegram();
@@ -49,10 +50,18 @@ const DocumentPage = () => {
   return (
     <div className="DocumentPage">
       <button onClick={handleDownloadAndSend}>Download and Send PDF</button>
+      <Link to="/">Back</Link>
       {/* <PDFDownloadLink document={<PDFFile />} filename="FORM">
-      {({loading}) => (loading ? <button>Loading Document...</button> : <button>Download</button> )}
+        {({ loading }) =>
+          loading ? (
+            <button>Loading Document...</button>
+          ) : (
+            <button>Download</button>
+          )
+        }
       </PDFDownloadLink> */}
-      {/* <PDFFile value={items} /> */}
+      {/* закоментировать PDFFile когда макет будет готов */}
+      <PDFFile value={items} />
     </div>
   );
 };

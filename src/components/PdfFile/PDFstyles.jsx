@@ -164,9 +164,19 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   TableColMiniDescription: {
+    paddingTop: 5,
     textAlign: "center",
     textIndent: 45,
     fontFamily: "CalibriItalic",
+  },
+  BoldText: {
+    fontFamily: "CalibriBold",
+  },
+  TextCenter: {
+    textAlign: "center",
+  },
+  ItalicBoldText: {
+    fontFamily: "CalibriBoldItalic",
   },
 });
 
