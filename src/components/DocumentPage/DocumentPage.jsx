@@ -8,6 +8,8 @@ import { Link } from "react-router-dom";
 const DocumentPage = () => {
   const { user } = useTelegram();
   const items = useSelector((state) => state.equip);
+  const info = useSelector((state) => state.pdfinfo);
+  console.log(info);
   console.log(items);
   const sendPdfToTelegram = async (pdfBlob) => {
     const formData = new FormData();
@@ -61,7 +63,14 @@ const DocumentPage = () => {
         }
       </PDFDownloadLink> */}
       {/* закоментировать PDFFile когда макет будет готов */}
-      <PDFFile value={items} />
+      <PDFFile
+        value={items}
+        place={info.adres}
+        date={info.date}
+        discount={info.discount}
+        titleTable={info.title}
+        miniDescription={info.description}
+      />
     </div>
   );
 };
