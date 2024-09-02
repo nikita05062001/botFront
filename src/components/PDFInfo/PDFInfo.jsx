@@ -4,6 +4,7 @@ import SvgExit from "../../svg/exit/SvgExit";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { changeInfo } from "../../redux/pdfinfoReducer";
+import { changeServices } from "../../redux/pdfservicesReducer";
 
 const PDFInfo = ({ setState }) => {
   const [info, setInfo] = useState({
@@ -13,11 +14,58 @@ const PDFInfo = ({ setState }) => {
     description: "",
     discount: "",
   });
+
+  const [services, setServices] = useState({
+    1: {
+      title: "Услуги инженера-техника",
+      description: "Монтаж демонтаж оборудования",
+      count: "",
+      price: "",
+    },
+    2: {
+      title: "Услуги транспортировки",
+      description: "Отправка грузка A-B, B-A.",
+      count: "",
+      price: "",
+    },
+  });
+
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(changeInfo(info));
   }, [info]);
+
+  useEffect(() => {
+    dispatch(changeServices(services));
+  }, [services]);
+
+  useEffect(() => {
+    console.log(services);
+  }, [services]);
+
+  const addService = () => {
+    const newId = Object.keys(services).length + 1;
+    setServices((prevServices) => ({
+      ...prevServices,
+      [newId]: {
+        title: "",
+        description: "",
+        count: "",
+        price: "",
+      },
+    }));
+  };
+
+  const handleServiceChange = (id, field, value) => {
+    setServices((prevServices) => ({
+      ...prevServices,
+      [id]: {
+        ...prevServices[id],
+        [field]: value,
+      },
+    }));
+  };
 
   return (
     <div className="PDFInfo">
@@ -78,6 +126,68 @@ const PDFInfo = ({ setState }) => {
                 className="PDFInfo-content-body-inputs-input-discount"
                 onChange={(e) => setInfo({ ...info, discount: e.target.value })}
               />
+            </div>
+          </div>
+          <div className="PDFInfo-content-body-services">
+            <div className="PDFInfo-content-body-services-title">
+              <p>Выберите услуги специалистов</p>
+            </div>
+            <div className="PDFInfo-content-body-services-list">
+              <ul>
+                {Object.keys(services).map((id) => (
+                  <li key={id}>
+                    <input
+                      type="text"
+                      value={services[id].title}
+                      placeholder="введите заголовок услуги"
+                      onChange={(e) =>
+                        handleServiceChange(id, "title", e.target.value)
+                      }
+                    />
+                    <input
+                      type="text"
+                      value={services[id].description}
+                      placeholder="введите описание услуги"
+                      onChange={(e) =>
+                        handleServiceChange(id, "description", e.target.value)
+                      }
+                    />
+                    <input
+                      type="number"
+                      value={services[id].count}
+                      placeholder="введите кол-во"
+                      onChange={(e) =>
+                        handleServiceChange(id, "count", e.target.value)
+                      }
+                    />
+                    <input
+                      type="number"
+                      value={services[id].price}
+                      placeholder="введите цену"
+                      onChange={(e) =>
+                        handleServiceChange(id, "price", e.target.value)
+                      }
+                    />
+                    <button
+                      onClick={() =>
+                        setServices((prevServices) => {
+                          const newServices = { ...prevServices };
+                          delete newServices[id];
+                          return newServices;
+                        })
+                      }
+                    >
+                      Удалить услугу
+                    </button>
+                  </li>
+                ))}
+                <div className="PDFInfo-content-body-services-list-custom">
+                  <p className="PDFInfo-content-body-services-list-custom-title">
+                    Создать услугу
+                  </p>
+                  <button onClick={addService}>Добавить услугу</button>
+                </div>
+              </ul>
             </div>
           </div>
         </div>

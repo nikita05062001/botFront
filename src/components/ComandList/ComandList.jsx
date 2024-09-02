@@ -24,6 +24,19 @@ const ComandList = () => {
   const value = useSelector((state) => state.equip);
 
   useEffect(() => {
+    if (selectedElement) {
+      document.body.classList.add("no-scroll");
+    } else {
+      document.body.classList.remove("no-scroll");
+    }
+
+    // Очистка при размонтировании компонента
+    return () => {
+      document.body.classList.remove("no-scroll");
+    };
+  }, [selectedElement]);
+
+  useEffect(() => {
     const fetchList = async () => {
       try {
         const response = await axios.get(

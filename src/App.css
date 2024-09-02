@@ -9,6 +9,9 @@ body {
   background-color: var(--tg-theme-bg-color);
   color: var(--tg-theme-text-color);
 }
+.no-scroll {
+  overflow: hidden;
+}
 .body {
   max-width: 420px;
   padding: 15px;

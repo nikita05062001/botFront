@@ -222,6 +222,37 @@ const PDFFile = ({
             >
               <Text style={styles.TableColTitle}>Услуги специалистов</Text>
             </View>
+            <View
+              style={
+                (countItems + 1) % 2 === 0
+                  ? [styles.bodyTableRow, styles.TableRowColorGrey]
+                  : [styles.bodyTableRow]
+              }
+              wrap={false}
+            >
+              <View style={styles.bodyTableColId}>
+                <Text style={styles.bodyTableCell}>24</Text>
+              </View>
+              <View style={styles.bodyTableColName}>
+                <Text style={styles.bodyTableCell}>
+                  Услуги инженера-техника
+                </Text>
+              </View>
+              <View style={[styles.bodyTableColDescription, styles.TextCenter]}>
+                <Text style={styles.bodyTableCell}>
+                  Монтаж демонтаж оборудования
+                </Text>
+              </View>
+              <View style={styles.bodyTableColCount}>
+                <Text style={styles.bodyTableCell}>1</Text>
+              </View>
+              <View style={styles.bodyTableColPrice}>
+                <Text style={styles.bodyTableCell}>20000</Text>
+              </View>
+              <View style={styles.bodyTableColAllPrice}>
+                <Text style={styles.bodyTableCell}>20000</Text>
+              </View>
+            </View>
           </View>
         </Page>
       </Document>

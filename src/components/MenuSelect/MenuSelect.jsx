@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./MenuSelect.scss";
 import { Link } from "react-router-dom";
 import PDFInfo from "../PDFInfo/PDFInfo";
@@ -8,6 +8,20 @@ const MenuSelect = ({ stateMenu }) => {
     stateMenu(value);
   };
   const [showPDFInfo, setShowPDFInfo] = useState(false);
+
+  useEffect(() => {
+    if (showPDFInfo) {
+      document.body.classList.add("no-scroll");
+    } else {
+      document.body.classList.remove("no-scroll");
+    }
+
+    // Очистка при размонтировании компонента
+    return () => {
+      document.body.classList.remove("no-scroll");
+    };
+  }, [showPDFInfo]);
+
   return (
     <div className="menu">
       <div className="menu-content">
