@@ -18,11 +18,14 @@ const pdfservicesSlice = createSlice({
   },
   reducers: {
     changeServices: (state, action) => {
-      return { ...state, ...action.payload };
+      return { ...state, ...action.payload }; // обновляем или добавляем новые сервисы
+    },
+    removeService: (state, action) => {
+      const id = action.payload;
+      delete state[id]; // удаляем сервис по его ID
     },
   },
 });
 
-export const { changeServices } = pdfservicesSlice.actions;
-
+export const { changeServices, removeService } = pdfservicesSlice.actions;
 export default pdfservicesSlice.reducer;

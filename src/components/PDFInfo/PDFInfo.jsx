@@ -2,34 +2,22 @@ import React, { useEffect, useState } from "react";
 import "./PDFInfo.scss";
 import SvgExit from "../../svg/exit/SvgExit";
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { changeInfo } from "../../redux/pdfinfoReducer";
-import { changeServices } from "../../redux/pdfservicesReducer";
+import { changeServices, removeService } from "../../redux/pdfservicesReducer";
 
 const PDFInfo = ({ setState }) => {
+  const infoState = useSelector((state) => state.pdfinfo);
+  const servicesState = useSelector((state) => state.pdfservices);
   const [info, setInfo] = useState({
-    adres: "",
-    date: "",
-    title: "",
-    description: "",
-    discount: "",
-    dateSign: "",
+    adres: infoState.adres,
+    date: infoState.date,
+    title: infoState.title,
+    description: infoState.description,
+    discount: infoState.discount,
+    dateSign: infoState.dateSign,
   });
-
-  const [services, setServices] = useState({
-    1: {
-      title: "Услуги инженера-техника",
-      description: "Монтаж демонтаж оборудования",
-      count: "",
-      price: "",
-    },
-    2: {
-      title: "Услуги транспортировки",
-      description: "Отправка грузка A-B, B-A.",
-      count: "",
-      price: "",
-    },
-  });
+  const [services, setServices] = useState(servicesState);
 
   const dispatch = useDispatch();
 
@@ -38,13 +26,10 @@ const PDFInfo = ({ setState }) => {
   }, [info]);
 
   useEffect(() => {
-    dispatch(changeServices(services));
+    dispatch(changeServices(services)); // Обновляем услуги в Redux
   }, [services]);
 
-  useEffect(() => {
-    console.log(services);
-  }, [services]);
-
+  // Функция для добавления новой услуги
   const addService = () => {
     const newId = Object.keys(services).length + 1;
     setServices((prevServices) => ({
@@ -58,6 +43,7 @@ const PDFInfo = ({ setState }) => {
     }));
   };
 
+  // Обработчик изменений для конкретного поля услуги
   const handleServiceChange = (id, field, value) => {
     setServices((prevServices) => ({
       ...prevServices,
@@ -66,6 +52,16 @@ const PDFInfo = ({ setState }) => {
         [field]: value,
       },
     }));
+  };
+
+  // Функция удаления услуги как из локального стейта, так и из Redux
+  const handleRemoveService = (id) => {
+    setServices((prevServices) => {
+      const newServices = { ...prevServices };
+      delete newServices[id]; // Удаляем услугу из локального состояния
+      return newServices;
+    });
+    dispatch(removeService(id)); // Удаляем услугу из Redux
   };
 
   return (
@@ -86,6 +82,7 @@ const PDFInfo = ({ setState }) => {
           <div className="PDFInfo-content-body-inputs">
             <div className="PDFInfo-content-body-inputs-input">
               <input
+                defaultValue={info.adres}
                 type="text"
                 placeholder="Введите адрес"
                 className="PDFInfo-content-body-inputs-input-adres"
@@ -94,6 +91,7 @@ const PDFInfo = ({ setState }) => {
             </div>
             <div className="PDFInfo-content-body-inputs-input">
               <input
+                defaultValue={info.date}
                 type="text"
                 placeholder="Введите дату"
                 className="PDFInfo-content-body-inputs-input-date"
@@ -102,6 +100,7 @@ const PDFInfo = ({ setState }) => {
             </div>
             <div className="PDFInfo-content-body-inputs-input">
               <input
+                defaultValue={info.dateSign}
                 type="text"
                 placeholder="Введите дату подписания документа"
                 className="PDFInfo-content-body-inputs-input-date"
@@ -110,6 +109,7 @@ const PDFInfo = ({ setState }) => {
             </div>
             <div className="PDFInfo-content-body-inputs-input">
               <input
+                defaultValue={info.title}
                 type="text"
                 placeholder="Введите заголовок"
                 className="PDFInfo-content-body-inputs-input-title"
@@ -118,6 +118,7 @@ const PDFInfo = ({ setState }) => {
             </div>
             <div className="PDFInfo-content-body-inputs-input">
               <input
+                defaultValue={info.description}
                 type="text"
                 placeholder="Введите мини-описание"
                 className="PDFInfo-content-body-inputs-input-description"
@@ -128,6 +129,7 @@ const PDFInfo = ({ setState }) => {
             </div>
             <div className="PDFInfo-content-body-inputs-input">
               <input
+                defaultValue={info.discount}
                 type="number"
                 max={100}
                 min={0}
@@ -177,15 +179,7 @@ const PDFInfo = ({ setState }) => {
                         handleServiceChange(id, "price", e.target.value)
                       }
                     />
-                    <button
-                      onClick={() =>
-                        setServices((prevServices) => {
-                          const newServices = { ...prevServices };
-                          delete newServices[id];
-                          return newServices;
-                        })
-                      }
-                    >
+                    <button onClick={() => handleRemoveService(id)}>
                       Удалить услугу
                     </button>
                   </li>

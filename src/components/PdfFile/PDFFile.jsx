@@ -270,74 +270,81 @@ const PDFFile = ({
                     </View>
                   </View>
                 ))}
+                {/*Итого за услуги*/}
+                <View
+                  style={
+                    (countItems + servicesCount) % 2 === 0
+                      ? [styles.bodyTableRow, styles.TableRowColorGrey]
+                      : [styles.bodyTableRow]
+                  }
+                  wrap={false}
+                >
+                  <View style={styles.bodyTableColId}>
+                    <Text style={styles.bodyTableCell}></Text>
+                  </View>
+                  <View style={[styles.bodyTableColName, styles.BoldText]}>
+                    <Text style={styles.bodyTableCell}>
+                      Итоги промежуточные
+                    </Text>
+                  </View>
+                  <View
+                    style={[styles.bodyTableColDescription, styles.TextCenter]}
+                  >
+                    <Text style={styles.bodyTableCell}></Text>
+                  </View>
+                  <View style={styles.bodyTableColCount}>
+                    <Text style={styles.bodyTableCell}></Text>
+                  </View>
+                  <View style={styles.bodyTableColPrice}>
+                    <Text style={styles.bodyTableCell}></Text>
+                  </View>
+                  <View style={styles.bodyTableColAllPrice}>
+                    <Text style={styles.bodyTableCell}>{servicesPrice}</Text>
+                  </View>
+                </View>
+                {/*Итого за все*/}
+                <View
+                  style={
+                    (countItems + servicesCount + 1) % 2 === 0
+                      ? [styles.bodyTableRow, styles.TableRowColorGrey]
+                      : [styles.bodyTableRow]
+                  }
+                  wrap={false}
+                >
+                  <View style={styles.bodyTableColId}>
+                    <Text style={styles.bodyTableCell}></Text>
+                  </View>
+                  <View
+                    style={[
+                      styles.bodyTableColName,
+                      styles.BoldText,
+                      styles.TextRight,
+                    ]}
+                  >
+                    <Text style={styles.bodyTableCell}>Итого</Text>
+                  </View>
+                  <View
+                    style={[styles.bodyTableColDescription, styles.TextCenter]}
+                  >
+                    <Text style={styles.bodyTableCell}></Text>
+                  </View>
+                  <View style={styles.bodyTableColCount}>
+                    <Text style={styles.bodyTableCell}></Text>
+                  </View>
+                  <View style={styles.bodyTableColPrice}>
+                    <Text style={styles.bodyTableCell}></Text>
+                  </View>
+                  <View style={styles.bodyTableColAllPrice}>
+                    <Text style={styles.bodyTableCell}>
+                      {servicesPrice +
+                        (equipPrice - equipPrice * (+discount / 100))}
+                    </Text>
+                  </View>
+                </View>
               </>
             ) : (
               <></>
             )}
-            {/*Итого за услуги*/}
-            <View
-              style={
-                (countItems + servicesCount) % 2 === 0
-                  ? [styles.bodyTableRow, styles.TableRowColorGrey]
-                  : [styles.bodyTableRow]
-              }
-              wrap={false}
-            >
-              <View style={styles.bodyTableColId}>
-                <Text style={styles.bodyTableCell}></Text>
-              </View>
-              <View style={[styles.bodyTableColName, styles.BoldText]}>
-                <Text style={styles.bodyTableCell}>Итоги промежуточные</Text>
-              </View>
-              <View style={[styles.bodyTableColDescription, styles.TextCenter]}>
-                <Text style={styles.bodyTableCell}></Text>
-              </View>
-              <View style={styles.bodyTableColCount}>
-                <Text style={styles.bodyTableCell}></Text>
-              </View>
-              <View style={styles.bodyTableColPrice}>
-                <Text style={styles.bodyTableCell}></Text>
-              </View>
-              <View style={styles.bodyTableColAllPrice}>
-                <Text style={styles.bodyTableCell}>{servicesPrice}</Text>
-              </View>
-            </View>
-            {/*Итого за все*/}
-            <View
-              style={
-                (countItems + servicesCount + 1) % 2 === 0
-                  ? [styles.bodyTableRow, styles.TableRowColorGrey]
-                  : [styles.bodyTableRow]
-              }
-              wrap={false}
-            >
-              <View style={styles.bodyTableColId}>
-                <Text style={styles.bodyTableCell}></Text>
-              </View>
-              <View
-                style={[
-                  styles.bodyTableColName,
-                  styles.BoldText,
-                  styles.TextRight,
-                ]}
-              >
-                <Text style={styles.bodyTableCell}>Итого</Text>
-              </View>
-              <View style={[styles.bodyTableColDescription, styles.TextCenter]}>
-                <Text style={styles.bodyTableCell}></Text>
-              </View>
-              <View style={styles.bodyTableColCount}>
-                <Text style={styles.bodyTableCell}></Text>
-              </View>
-              <View style={styles.bodyTableColPrice}>
-                <Text style={styles.bodyTableCell}></Text>
-              </View>
-              <View style={styles.bodyTableColAllPrice}>
-                <Text style={styles.bodyTableCell}>
-                  {servicesPrice + equipPrice}
-                </Text>
-              </View>
-            </View>
           </View>
           {/*Подпись и штамп*/}
           <View style={styles.FinishBlock}>
