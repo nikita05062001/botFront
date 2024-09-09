@@ -9,6 +9,7 @@ const DocumentPage = () => {
   const { user } = useTelegram();
   const items = useSelector((state) => state.equip);
   const info = useSelector((state) => state.pdfinfo);
+  const services = useSelector((state) => state.pdfservices);
   console.log(info);
   console.log(items);
   const sendPdfToTelegram = async (pdfBlob) => {
@@ -67,9 +68,11 @@ const DocumentPage = () => {
         value={items}
         place={info.adres}
         date={info.date}
+        dateSign={info.dateSign}
         discount={info.discount}
         titleTable={info.title}
         miniDescription={info.description}
+        services={services}
       />
     </div>
   );

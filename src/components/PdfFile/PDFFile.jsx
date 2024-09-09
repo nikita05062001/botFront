@@ -8,6 +8,8 @@ import {
   View,
 } from "@react-pdf/renderer";
 import Logo from "../../img/logo.jpg";
+import Sign from "../../img/podpis.jpg";
+import Shtamp from "../../img/shtamp.jpg";
 import { Font } from "@react-pdf/renderer";
 import MyCustomFont from "../../fonts/calibri.ttf";
 import MyCustomFontBold from "../../fonts/calibriBold.ttf";
@@ -37,10 +39,12 @@ const PDFFile = ({
   value = {},
   title = "Коммерческое предложение.",
   place = "г. Астана, улитца Кенесеры, дом 2, государственная филармония",
-  date = "01.01.2022",
+  date = "10.01.2022",
   titleTable = "Backline",
   miniDescription = "Барабанная установка, микрофоны вокальные, микрофоны для подзвучки барабанов, стойки микрофонные, коммутация для подключения инструментов.",
   discount = 20,
+  services = {},
+  dateSign = "01.01.2022",
 }) => {
   const items = Object.values(value);
   const countItems = items.length;
@@ -48,7 +52,12 @@ const PDFFile = ({
     (acc, item) => acc + item.Стоимость * item.count,
     0
   );
-  console.log(equipPrice);
+  services = Object.values(services);
+  const servicesCount = services.length;
+  const servicesPrice = services.reduce(
+    (acc, item) => acc + item.price * item.count,
+    0
+  );
   const Footer = ({ pageNumber }) => (
     <View style={styles.footer}>
       <Text>Page 1</Text>
@@ -152,7 +161,7 @@ const PDFFile = ({
                 </View>
               );
             })}
-            {/*Итого*/}
+            {/*Итого за оборудование*/}
             <View
               style={
                 (countItems + 1) % 2 === 0
@@ -212,45 +221,173 @@ const PDFFile = ({
                 </Text>
               </View>
             </View>
+            {/*Всякие услуги*/}
+            {services && services.length > 0 ? (
+              <>
+                <View
+                  style={
+                    (countItems + 3) % 2 === 0
+                      ? [styles.headerTableRow, styles.TableRowColorGrey]
+                      : [styles.headerTableRow]
+                  }
+                  wrap={false}
+                >
+                  <Text style={styles.TableColTitle}>Услуги специалистов</Text>
+                </View>
+                {services.map((item, index) => (
+                  <View
+                    style={
+                      (countItems + index) % 2 === 0
+                        ? [styles.bodyTableRow, styles.TableRowColorGrey]
+                        : [styles.bodyTableRow]
+                    }
+                    wrap={false}
+                    key={index}
+                  >
+                    <View style={styles.bodyTableColId}>
+                      <Text style={styles.bodyTableCell}>
+                        {countItems + index + 1}
+                      </Text>
+                    </View>
+                    <View style={styles.bodyTableColName}>
+                      <Text style={styles.bodyTableCell}>{item.title}</Text>
+                    </View>
+                    <View style={styles.bodyTableColDescription}>
+                      <Text style={styles.bodyTableCell}>
+                        {item.description}
+                      </Text>
+                    </View>
+                    <View style={styles.bodyTableColCount}>
+                      <Text style={styles.bodyTableCell}>{item.count}</Text>
+                    </View>
+                    <View style={styles.bodyTableColPrice}>
+                      <Text style={styles.bodyTableCell}>{item.price}</Text>
+                    </View>
+                    <View style={styles.bodyTableColAllPrice}>
+                      <Text style={styles.bodyTableCell}>
+                        {item.count * item.price}
+                      </Text>
+                    </View>
+                  </View>
+                ))}
+              </>
+            ) : (
+              <></>
+            )}
+            {/*Итого за услуги*/}
             <View
               style={
-                (countItems + 3) % 2 === 0
-                  ? [styles.headerTableRow, styles.TableRowColorGrey]
-                  : [styles.headerTableRow]
-              }
-              wrap={false}
-            >
-              <Text style={styles.TableColTitle}>Услуги специалистов</Text>
-            </View>
-            <View
-              style={
-                (countItems + 1) % 2 === 0
+                (countItems + servicesCount) % 2 === 0
                   ? [styles.bodyTableRow, styles.TableRowColorGrey]
                   : [styles.bodyTableRow]
               }
               wrap={false}
             >
               <View style={styles.bodyTableColId}>
-                <Text style={styles.bodyTableCell}>24</Text>
+                <Text style={styles.bodyTableCell}></Text>
               </View>
-              <View style={styles.bodyTableColName}>
-                <Text style={styles.bodyTableCell}>
-                  Услуги инженера-техника
-                </Text>
+              <View style={[styles.bodyTableColName, styles.BoldText]}>
+                <Text style={styles.bodyTableCell}>Итоги промежуточные</Text>
               </View>
               <View style={[styles.bodyTableColDescription, styles.TextCenter]}>
-                <Text style={styles.bodyTableCell}>
-                  Монтаж демонтаж оборудования
-                </Text>
+                <Text style={styles.bodyTableCell}></Text>
               </View>
               <View style={styles.bodyTableColCount}>
-                <Text style={styles.bodyTableCell}>1</Text>
+                <Text style={styles.bodyTableCell}></Text>
               </View>
               <View style={styles.bodyTableColPrice}>
-                <Text style={styles.bodyTableCell}>20000</Text>
+                <Text style={styles.bodyTableCell}></Text>
               </View>
               <View style={styles.bodyTableColAllPrice}>
-                <Text style={styles.bodyTableCell}>20000</Text>
+                <Text style={styles.bodyTableCell}>{servicesPrice}</Text>
+              </View>
+            </View>
+            {/*Итого за все*/}
+            <View
+              style={
+                (countItems + servicesCount + 1) % 2 === 0
+                  ? [styles.bodyTableRow, styles.TableRowColorGrey]
+                  : [styles.bodyTableRow]
+              }
+              wrap={false}
+            >
+              <View style={styles.bodyTableColId}>
+                <Text style={styles.bodyTableCell}></Text>
+              </View>
+              <View
+                style={[
+                  styles.bodyTableColName,
+                  styles.BoldText,
+                  styles.TextRight,
+                ]}
+              >
+                <Text style={styles.bodyTableCell}>Итого</Text>
+              </View>
+              <View style={[styles.bodyTableColDescription, styles.TextCenter]}>
+                <Text style={styles.bodyTableCell}></Text>
+              </View>
+              <View style={styles.bodyTableColCount}>
+                <Text style={styles.bodyTableCell}></Text>
+              </View>
+              <View style={styles.bodyTableColPrice}>
+                <Text style={styles.bodyTableCell}></Text>
+              </View>
+              <View style={styles.bodyTableColAllPrice}>
+                <Text style={styles.bodyTableCell}>
+                  {servicesPrice + equipPrice}
+                </Text>
+              </View>
+            </View>
+          </View>
+          {/*Подпись и штамп*/}
+          <View style={styles.FinishBlock}>
+            <View style={styles.FinishBlockLeft}>
+              <View style={styles.FinishBlockLeftContent}>
+                <Text
+                  style={[
+                    styles.FinishBlockLeftContentText,
+                    styles.BorderBottomBlackSmall,
+                  ]}
+                >
+                  Директор Ткаченко А. Н.
+                </Text>
+              </View>
+              <View style={styles.FinishBlockLeftContent}>
+                <Text style={styles.FinishBlockLeftContentText}>
+                  (Должность) Ф.И,О.
+                </Text>
+              </View>
+
+              <View style={styles.FinishBlockLeftContent}>
+                <Text
+                  style={[
+                    styles.FinishBlockLeftContentText,
+                    styles.BorderBottomBlackSmall,
+                  ]}
+                >
+                  {dateSign}
+                </Text>
+              </View>
+              <View style={styles.FinishBlockLeftContent}>
+                <Text style={styles.FinishBlockLeftContentText}>(Дата)</Text>
+              </View>
+              <View style={styles.FinishBlockLeftContent}>
+                <View style={styles.FinishBlockLeftContentSign}>
+                  <Text>Подпись</Text>
+                  <View style={styles.FinishBlockLeftContentSignImg}>
+                    <Image src={Sign} style={styles.SignImage} />
+                  </View>
+                </View>
+              </View>
+            </View>
+            <View style={styles.FinishBlockRight}>
+              <View style={styles.FinishBlockRightContent}>
+                <View style={styles.FinishBlockRightContentText}>
+                  <Text>М.П.</Text>
+                </View>
+                <View style={styles.FinishBlockRightContentImg}>
+                  <Image src={Shtamp} style={styles.ShtampImage} />
+                </View>
               </View>
             </View>
           </View>

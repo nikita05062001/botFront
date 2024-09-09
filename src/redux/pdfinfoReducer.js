@@ -8,6 +8,7 @@ const pdfinfoSlice = createSlice({
     title: "",
     description: "",
     discount: "",
+    dateSign: "",
   },
   reducers: {
     changeInfo: (state, action) => {

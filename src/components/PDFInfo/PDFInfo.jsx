@@ -13,6 +13,7 @@ const PDFInfo = ({ setState }) => {
     title: "",
     description: "",
     discount: "",
+    dateSign: "",
   });
 
   const [services, setServices] = useState({
@@ -97,6 +98,14 @@ const PDFInfo = ({ setState }) => {
                 placeholder="Введите дату"
                 className="PDFInfo-content-body-inputs-input-date"
                 onChange={(e) => setInfo({ ...info, date: e.target.value })}
+              />
+            </div>
+            <div className="PDFInfo-content-body-inputs-input">
+              <input
+                type="text"
+                placeholder="Введите дату подписания документа"
+                className="PDFInfo-content-body-inputs-input-date"
+                onChange={(e) => setInfo({ ...info, dateSign: e.target.value })}
               />
             </div>
             <div className="PDFInfo-content-body-inputs-input">

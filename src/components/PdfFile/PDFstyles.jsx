@@ -178,6 +178,67 @@ const styles = StyleSheet.create({
   ItalicBoldText: {
     fontFamily: "CalibriBoldItalic",
   },
+  TextRight: {
+    textAlign: "right",
+  },
+  TextLeft: {
+    textAlign: "left",
+  },
+  FinishBlock: {
+    marginTop: 40,
+    fontFamily: "Calibri",
+    fontSize: 12,
+    marginLeft: 35,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "80%",
+  },
+  FinishBlockLeft: {
+    width: "45%",
+  },
+  FinishBlockLeftContentText: {
+    paddingLeft: 5,
+    marginTop: 2,
+    zIndex: 100,
+  },
+  BorderBottomBlackSmall: {
+    borderBottom: "1px solid black",
+  },
+  FinishBlockLeftContentSign: {
+    display: "flex",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    marginLeft: 5,
+  },
+
+  FinishBlockLeftContentSignImg: {
+    width: "78%",
+    borderBottom: "1px solid black",
+    position: "relative",
+  },
+  SignImage: {
+    width: 47,
+    position: "absolute",
+    bottom: 0,
+    left: 50,
+    zIndex: -100,
+  },
+  FinishBlockRightContent: {
+    width: "45%",
+    display: "flex",
+    flexDirection: "row",
+    marginLeft: 150,
+  },
+  FinishBlockRightContentText: {
+    marginRight: 6,
+    marginTop: 24,
+  },
+  FinishBlockRightContentImg: {},
+  ShtampImage: {
+    marginTop: -20,
+    width: 140,
+  },
 });
 
 export default styles;
