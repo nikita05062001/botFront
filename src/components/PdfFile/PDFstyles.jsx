@@ -184,6 +184,17 @@ const styles = StyleSheet.create({
   TextLeft: {
     textAlign: "left",
   },
+  ConditionBlock: {
+    fontSize: 10,
+    marginTop: 20,
+    marginLeft: 70,
+    marginRight: 30,
+  },
+  ConditionBlockTitle: {},
+  ConditionBlockTitleText: {},
+  ConditionBlockСontent: {
+    fontFamily: "Calibri",
+  },
   FinishBlock: {
     marginTop: 40,
     fontFamily: "Calibri",

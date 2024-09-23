@@ -1,5 +1,62 @@
-p{
-    color: blue;
-    width: max-content;
-    padding: 10px;
+.DocumentPage {
+  margin-top: 20px;
+  &-content {
+    display: flex;
+    justify-content: space-between;
+    padding: 0px 10px;
+    margin-bottom: 20px;
+    &-buttons {
+      &-pdf {
+        background-color: red;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 10px;
+      }
+    }
+    &-back {
+      background-color: blue;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 10px;
+    }
+  }
+  &-list {
+    text-align: center;
+    &-item {
+      &-title {
+        margin: 10px 0;
+      }
+    }
+    &-items {
+      margin-top: 10px;
+      &-equip {
+        &-title {
+          margin-bottom: 10px;
+        }
+        &-item {
+          padding: 5px 0px;
+        }
+      }
+      &-services {
+        &-title {
+          margin-top: 10px;
+          margin-bottom: 10px;
+        }
+        &-item {
+          padding: 5px 0px;
+        }
+      }
+      &-conditions {
+        &-title {
+          margin-top: 10px;
+          margin-bottom: 10px;
+        }
+        &-item {
+          padding: 5px 0px;
+        }
+      }
+    }
+  }
 }
