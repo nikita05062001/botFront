@@ -95,6 +95,9 @@ const PDFFile = ({
               <View style={styles.headerTableColId}>
                 <Text style={styles.headerTableCell}>№ п/ п</Text>
               </View>
+              <View style={styles.headerTableColImg}>
+                <Text style={styles.headerTableCell}>Фото</Text>
+              </View>
               <View style={styles.headerTableColName}>
                 <Text style={styles.headerTableCell}>
                   Наименование услуги (работы)
@@ -136,6 +139,9 @@ const PDFFile = ({
                 >
                   <View style={styles.bodyTableColId}>
                     <Text style={styles.bodyTableCell}>{index + 1}</Text>
+                  </View>
+                  <View style={styles.bodyTableColImg}>
+                    <Image src={item["Изображения"]} />
                   </View>
                   <View style={styles.bodyTableColName}>
                     <Text style={styles.bodyTableCell}>

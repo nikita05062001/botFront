@@ -94,26 +94,34 @@ const styles = StyleSheet.create({
     width: "4.9%",
     textAlign: "center",
   },
+  headerTableColImg: {
+    width: "20%",
+    textAlign: "center",
+    marginTop: 18,
+  },
+  bodyTableColImg: {
+    width: "20%",
+  },
   headerTableColName: {
-    width: "25%",
+    width: "20%",
     textAlign: "left",
     marginTop: 18,
     paddingRight: 55,
   },
   bodyTableColName: {
-    width: "25%",
+    width: "20%",
     textAlign: "left",
     flexGrow: 1,
     flexWrap: "wrap", // Обеспечивает перенос текста на новую строку
     overflow: "hidden", // Скрывает текст, который не помещается в контейнер
   },
   headerTableColDescription: {
-    width: "40%",
+    width: "30%",
     marginTop: 18,
     textAlign: "center",
   },
   bodyTableColDescription: {
-    width: "40%",
+    width: "30%",
     flexWrap: "wrap", // Обеспечивает перенос текста на новую строку
     overflow: "hidden", // Скрывает текст, который не помещается в контейнер
   },
@@ -127,12 +135,12 @@ const styles = StyleSheet.create({
     textAlign: "left",
   },
   headerTableColPrice: {
-    width: "15%",
+    width: "10%",
     textAlign: "center",
     marginTop: 18,
   },
   bodyTableColPrice: {
-    width: "15%",
+    width: "10%",
     textAlign: "center",
   },
   headerTableColAllPrice: {
