@@ -6,8 +6,10 @@ const Header = () => {
   const { user, onClose } = useTelegram();
   return (
     <div className="header">
-      
       <Button onClick={onClose}>Закрыть</Button>
+      <Button onClick={() => localStorage.setItem("test", "true")}>
+        {localStorage.getItem("test") || "false"}
+      </Button>
       <span className="username">{user?.username || "Пользователь"}</span>
     </div>
   );
