@@ -20,203 +20,149 @@ import {
 const PDFInfo = ({ setState }) => {
   const infoState = useSelector((state) => state.pdfinfo);
   const servicesState = useSelector((state) => state.pdfservices);
-  const conditions = useSelector((state) => state.pdfcondition); // Получаем условия из состояния Redux
+  const conditions = useSelector((state) => state.pdfcondition);
+  const eqipItemsObj = useSelector((state) => state.equip) || {};
   const dispatch = useDispatch();
 
-  // Локальный стейт для информации и услуг
   const [info, setInfo] = useState(infoState);
   const [services, setServices] = useState(servicesState);
-  const [nextId, setNextId] = useState(Date.now()); // Уникальный идентификатор для новых услуг и условий
+  const [nextId, setNextId] = useState(Date.now());
 
-  // Синхронизация локального стейта с Redux
   useEffect(() => {
-    dispatch(changeInfo(info)); // Обновляем информацию в Redux при изменении локального стейта
+    dispatch(changeInfo(info));
   }, [info, dispatch]);
 
   useEffect(() => {
-    dispatch(changeServices(services)); // Обновляем услуги в Redux при изменении локального стейта
+    dispatch(changeServices(services));
   }, [services, dispatch]);
 
-  // Функция для добавления новой услуги
+  // ПРЕВРАЩАЕМ ОБЪЕКТ В МАССИВ (Фикс ошибки .map)
+  const eqipItems = Object.entries(eqipItemsObj);
+
+  // --- ФУНКЦИИ ДЛЯ УСЛУГ ---
   const addService = () => {
-    const newId = Date.now(); // Генерация уникального ID
-    const newService = {
-      title: "",
-      description: "",
-      count: "",
-      price: "",
-    };
-
-    setServices((prevServices) => ({
-      ...prevServices,
-      [newId]: newService,
-    }));
-
-    // Сразу обновляем Redux
+    const newId = Date.now();
+    const newService = { title: "", description: "", count: "", price: "" };
+    setServices((prev) => ({ ...prev, [newId]: newService }));
     dispatch(changeServices({ [newId]: newService }));
   };
 
-  // Обработчик изменений для конкретного поля услуги
   const handleServiceChange = (id, field, value) => {
-    const updatedService = {
-      ...services[id],
-      [field]: value,
-    };
-
-    setServices((prevServices) => ({
-      ...prevServices,
-      [id]: updatedService,
-    }));
-
-    // Обновляем Redux
-    dispatch(changeServices({ [id]: updatedService }));
+    const updated = { ...services[id], [field]: value };
+    setServices((prev) => ({ ...prev, [id]: updated }));
+    dispatch(changeServices({ [id]: updated }));
   };
 
-  // Функция удаления услуги как из локального стейта, так и из Redux
   const handleRemoveService = (id) => {
-    setServices((prevServices) => {
-      const newServices = { ...prevServices };
-      delete newServices[id]; // Удаляем услугу из локального состояния
+    setServices((prev) => {
+      const newServices = { ...prev };
+      delete newServices[id];
       return newServices;
     });
-
-    dispatch(removeService(id)); // Удаляем услугу из Redux
+    dispatch(removeService(id));
   };
 
-  // Функция для добавления нового условия
+  // --- ФУНКЦИИ ДЛЯ УСЛОВИЙ ---
   const handleAddCondition = () => {
-    dispatch(addCondition({ id: nextId, text: "" })); // Добавляем новое пустое условие
-    setNextId(Date.now()); // Генерируем новый уникальный ID для следующего условия
+    dispatch(addCondition({ id: Date.now(), text: "" }));
   };
 
-  // Функция для изменения текста условия
   const handleChangeCondition = (id, text) => {
     dispatch(changeCondition({ id, text }));
   };
 
-  // Функция для удаления условия
   const handleRemoveCondition = (id) => {
     dispatch(removeCondition({ id }));
   };
 
-  const eqipItemsObj = useSelector((state) => state.equip);
-  const eqipItems = Object.values(eqipItemsObj || {});
-
   return (
     <div className="PDFInfo">
       <div className="PDFInfo-content">
-        <div
-          className="infoMenu-exit"
-          onClick={() => {
-            setState(false);
-          }}
-        >
+        <div className="infoMenu-exit" onClick={() => setState(false)}>
           <SvgExit fill={"aqua"} />
         </div>
-        <div className="PDFInfo-content-title">
-          <p>Введите данные</p>
-        </div>
-        <div className="PDFInfo-content-body">
-          <div className="PDFInfo-content-body-inputs">
-            <div className="PDFInfo-content-body-inputs-input">
-              <input
-                value={info.adres}
-                type="text"
-                placeholder="Введите адрес"
-                className="PDFInfo-content-body-inputs-input-adres"
-                onChange={(e) => setInfo({ ...info, adres: e.target.value })}
-              />
-            </div>
-            <div className="PDFInfo-content-body-inputs-input">
-              <input
-                value={info.date}
-                type="text"
-                placeholder="Введите дату"
-                className="PDFInfo-content-body-inputs-input-date"
-                onChange={(e) => setInfo({ ...info, date: e.target.value })}
-              />
-            </div>
-            <div className="PDFInfo-content-body-inputs-input">
-              <input
-                value={info.dateSign}
-                type="text"
-                placeholder="Введите дату подписания документа"
-                className="PDFInfo-content-body-inputs-input-date"
-                onChange={(e) => setInfo({ ...info, dateSign: e.target.value })}
-              />
-            </div>
-            <div className="PDFInfo-content-body-inputs-input">
-              <input
-                value={info.title}
-                type="text"
-                placeholder="Введите заголовок"
-                className="PDFInfo-content-body-inputs-input-title"
-                onChange={(e) => setInfo({ ...info, title: e.target.value })}
-              />
-            </div>
-            <div className="PDFInfo-content-body-inputs-input">
-              <input
-                value={info.description}
-                type="text"
-                placeholder="Введите мини-описание"
-                className="PDFInfo-content-body-inputs-input-description"
-                onChange={(e) =>
-                  setInfo({ ...info, description: e.target.value })
-                }
-              />
-            </div>
-            <div className="PDFInfo-content-body-inputs-input">
-              <input
-                value={info.discount}
-                type="number"
-                max={100}
-                min={0}
-                placeholder="Введите скидку"
-                className="PDFInfo-content-body-inputs-input-discount"
-                onChange={(e) => setInfo({ ...info, discount: e.target.value })}
-              />
-            </div>
-          </div>
-          <div className="PDFInfo-content-body-items">
-            {eqipItems.map((item, index) => {
-              const itemId = Object.keys(eqipItemsObj)[index];
 
-              // Расчет суммы для одной позиции
-              // parseFloat преобразует строку в число, || 0 обрабатывает пустое поле или NaN
+        <div className="PDFInfo-content-title">
+          <p>Введите данные для документа</p>
+        </div>
+
+        <div className="PDFInfo-content-body">
+          {/* БЛОК 1: ОСНОВНЫЕ ИНПУТЫ */}
+          <div className="PDFInfo-content-body-inputs">
+            <input
+              value={info.adres || ""}
+              placeholder="Введите адрес"
+              onChange={(e) => setInfo({ ...info, adres: e.target.value })}
+            />
+            <input
+              value={info.date || ""}
+              placeholder="Введите дату"
+              onChange={(e) => setInfo({ ...info, date: e.target.value })}
+            />
+            <input
+              value={info.dateSign || ""}
+              placeholder="Дата подписания"
+              onChange={(e) => setInfo({ ...info, dateSign: e.target.value })}
+            />
+            <input
+              value={info.title || ""}
+              placeholder="Заголовок документа"
+              onChange={(e) => setInfo({ ...info, title: e.target.value })}
+            />
+            <input
+              value={info.description || ""}
+              placeholder="Мини-описание"
+              onChange={(e) =>
+                setInfo({ ...info, description: e.target.value })
+              }
+            />
+            <input
+              type="number"
+              value={info.discount || ""}
+              placeholder="Скидка %"
+              onChange={(e) => setInfo({ ...info, discount: e.target.value })}
+            />
+          </div>
+
+          {/* БЛОК 2: ОБОРУДОВАНИЕ */}
+          <div className="PDFInfo-content-body-items">
+            {eqipItems.map(([itemId, item]) => {
               const price = parseFloat(item.price) || 0;
               const count = item.count || 0;
-              const totalItemPrice = price * count;
-
               return (
                 <div className="PDFInfo-content-body-items-item" key={itemId}>
-                  <p>
-                    <strong>{item["Наименование"]}</strong>
-                  </p>
-
-                  <img
-                    src={getGoogleDriveUrl(item["URL-Изображения"])}
-                    alt={item["Наименование"]}
-                  />
-
-                  <div className="quantity-controls">
-                    <button
-                      onClick={() => dispatch(changeEquipMinus({ id: itemId }))}
-                    >
-                      -
-                    </button>
-                    <span>{count} шт.</span>
-                    <button
-                      onClick={() => dispatch(changeEquipPlus({ id: itemId }))}
-                    >
-                      +
-                    </button>
+                  <div className="item-main-info">
+                    <img
+                      src={getGoogleDriveUrl(item["URL-Изображения"])}
+                      alt=""
+                    />
+                    <p>
+                      <strong>{item["Наименование"]}</strong>
+                    </p>
                   </div>
 
-                  <div className="price-inputs">
+                  <div className="item-controls">
+                    <div className="quantity-controls">
+                      <button
+                        onClick={() =>
+                          dispatch(changeEquipMinus({ id: itemId }))
+                        }
+                      >
+                        -
+                      </button>
+                      <span>{count} шт.</span>
+                      <button
+                        onClick={() =>
+                          dispatch(changeEquipPlus({ id: itemId }))
+                        }
+                      >
+                        +
+                      </button>
+                    </div>
                     <input
                       type="number"
                       value={item.price || ""}
-                      placeholder="Цена (₸)"
+                      placeholder="Цена"
                       onChange={(e) =>
                         dispatch(
                           changeEquipPrice({
@@ -226,130 +172,111 @@ const PDFInfo = ({ setState }) => {
                         )
                       }
                     />
-                  </div>
-
-                  <div className="item-total">
-                    {/* Форматирование: 15000 -> 15 000 ₸ */}
-                    <p>
-                      Сумма:{" "}
-                      <strong>
-                        {totalItemPrice.toLocaleString("kk-KZ")} ₸
-                      </strong>
-                    </p>
+                    <div className="item-total">
+                      {(price * count).toLocaleString("kk-KZ")} ₸
+                    </div>
                   </div>
                 </div>
               );
             })}
 
-            {/* Общий итог по всем позициям */}
-            <div
-              className="grand-total"
-              style={{
-                marginTop: "20px",
-                borderTop: "1px solid aqua",
-                paddingTop: "10px",
-              }}
-            >
-              <h3>
-                Итого к оплате:{" "}
-                {eqipItems
-                  .reduce((sum, item) => {
-                    const p = parseFloat(item.price) || 0;
-                    const c = item.count || 0;
-                    return sum + p * c;
-                  }, 0)
-                  .toLocaleString("kk-KZ")}{" "}
-                ₸
-              </h3>
+            <div className="grand-total">
+              <p>
+                Итого оборудование:{" "}
+                <span>
+                  {eqipItems
+                    .reduce(
+                      (s, [_, i]) =>
+                        s + (parseFloat(i.price) || 0) * (i.count || 0),
+                      0,
+                    )
+                    .toLocaleString("kk-KZ")}{" "}
+                  ₸
+                </span>
+              </p>
             </div>
           </div>
+
+          {/* БЛОК 3: УСЛУГИ */}
           <div className="PDFInfo-content-body-services">
-            <div className="PDFInfo-content-body-services-title">
-              <p>Выберите услуги специалистов</p>
-            </div>
+            <p className="section-subtitle">Услуги специалистов</p>
             <div className="PDFInfo-content-body-services-list">
-              <ul>
-                {Object.keys(services).map((id) => (
-                  <li key={id}>
-                    <input
-                      type="text"
-                      value={services[id].title}
-                      placeholder="введите заголовок услуги"
-                      onChange={(e) =>
-                        handleServiceChange(id, "title", e.target.value)
-                      }
-                    />
-                    <input
-                      type="text"
-                      value={services[id].description}
-                      placeholder="введите описание услуги"
-                      onChange={(e) =>
-                        handleServiceChange(id, "description", e.target.value)
-                      }
-                    />
+              {Object.keys(services).map((id) => (
+                <div key={id} className="service-card">
+                  <input
+                    className="input-title"
+                    value={services[id].title}
+                    placeholder="Название услуги"
+                    onChange={(e) =>
+                      handleServiceChange(id, "title", e.target.value)
+                    }
+                  />
+                  <textarea
+                    className="input-desc"
+                    value={services[id].description}
+                    placeholder="Описание"
+                    onChange={(e) =>
+                      handleServiceChange(id, "description", e.target.value)
+                    }
+                  />
+                  <div className="service-pricing">
                     <input
                       type="number"
+                      placeholder="Кол-во"
                       value={services[id].count}
-                      placeholder="введите кол-во"
                       onChange={(e) =>
                         handleServiceChange(id, "count", e.target.value)
                       }
                     />
                     <input
                       type="number"
+                      placeholder="Цена ₸"
                       value={services[id].price}
-                      placeholder="введите цену"
                       onChange={(e) =>
                         handleServiceChange(id, "price", e.target.value)
                       }
                     />
-                    <button onClick={() => handleRemoveService(id)}>
-                      Удалить услугу
+                    <button
+                      className="remove-btn"
+                      onClick={() => handleRemoveService(id)}
+                    >
+                      ×
                     </button>
-                  </li>
-                ))}
-                <div className="PDFInfo-content-body-services-list-custom">
-                  <p className="PDFInfo-content-body-services-list-custom-title">
-                    Создать услугу
-                  </p>
-                  <button onClick={addService}>Добавить услугу</button>
-                </div>
-              </ul>
-            </div>
-          </div>
-          <div className="PDFInfo-content-body-conditions">
-            <div className="PDFInfo-content-body-conditions-title">
-              <p>Условия</p>
-            </div>
-
-            {conditions &&
-              conditions.map((condition) => (
-                <div
-                  key={condition.id}
-                  className="PDFInfo-content-body-conditions-condition"
-                >
-                  <textarea
-                    value={condition.text}
-                    placeholder="введите условие"
-                    onChange={(e) =>
-                      handleChangeCondition(condition.id, e.target.value)
-                    } // Изменение текста условия
-                  />
-                  <button
-                    className="PDFInfo-content-body-conditions-condition-remove"
-                    onClick={() => handleRemoveCondition(condition.id)}
-                  >
-                    Удалить
-                  </button>
+                  </div>
                 </div>
               ))}
-            <div className="PDFInfo-content-body-conditions-condition-add">
-              <button onClick={handleAddCondition}>Добавить условие</button>
+              <button className="add-btn" onClick={addService}>
+                + Добавить услугу
+              </button>
             </div>
           </div>
+
+          {/* БЛОК 4: УСЛОВИЯ */}
+          <div className="PDFInfo-content-body-conditions">
+            <p className="section-subtitle">Условия</p>
+            {conditions?.map((c) => (
+              <div key={c.id} className="condition-card">
+                <textarea
+                  value={c.text}
+                  placeholder="Текст условия..."
+                  onChange={(e) => handleChangeCondition(c.id, e.target.value)}
+                />
+                <button
+                  className="remove-btn-simple"
+                  onClick={() => handleRemoveCondition(c.id)}
+                >
+                  Удалить
+                </button>
+              </div>
+            ))}
+            <button className="add-btn" onClick={handleAddCondition}>
+              + Добавить условие
+            </button>
+          </div>
         </div>
+
         <div className="PDFInfo-content-button">
-          <Link to="/document">Оформить</Link>
+          <Link to="/document">ОФОРМИТЬ ДОКУМЕНТ</Link>
         </div>
       </div>
     </div>

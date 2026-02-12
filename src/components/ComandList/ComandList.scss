@@ -2,8 +2,8 @@
   margin-top: 10px;
   margin-left: 5px;
   background-color: var(--tg-theme-secondary-bg-color);
-  &-input{
-    input{
+  &-input {
+    input {
       width: 100%;
     }
   }
@@ -22,11 +22,11 @@
   }
   &-content {
     width: 100%;
-    &-title{
+    &-title {
       width: 85%;
       padding-right: 15px;
     }
-    &-count{
+    &-count {
       width: 15%;
       display: flex;
       justify-content: space-between;
