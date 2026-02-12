@@ -10,6 +10,12 @@ import {
   changeCondition,
   removeCondition,
 } from "../../redux/pdfConditionReducer";
+import getGoogleDriveUrl from "../../api/getGoogleImg";
+import {
+  changeEquipPrice,
+  changeEquipPlus,
+  changeEquipMinus,
+} from "../../redux/eqipReducer";
 
 const PDFInfo = ({ setState }) => {
   const infoState = useSelector((state) => state.pdfinfo);
@@ -93,6 +99,9 @@ const PDFInfo = ({ setState }) => {
     dispatch(removeCondition({ id }));
   };
 
+  const eqipItemsObj = useSelector((state) => state.equip);
+  const eqipItems = Object.values(eqipItemsObj || {});
+
   return (
     <div className="PDFInfo">
       <div className="PDFInfo-content">
@@ -166,6 +175,92 @@ const PDFInfo = ({ setState }) => {
                 className="PDFInfo-content-body-inputs-input-discount"
                 onChange={(e) => setInfo({ ...info, discount: e.target.value })}
               />
+            </div>
+          </div>
+          <div className="PDFInfo-content-body-items">
+            {eqipItems.map((item, index) => {
+              const itemId = Object.keys(eqipItemsObj)[index];
+
+              // Расчет суммы для одной позиции
+              // parseFloat преобразует строку в число, || 0 обрабатывает пустое поле или NaN
+              const price = parseFloat(item.price) || 0;
+              const count = item.count || 0;
+              const totalItemPrice = price * count;
+
+              return (
+                <div className="PDFInfo-content-body-items-item" key={itemId}>
+                  <p>
+                    <strong>{item["Наименование"]}</strong>
+                  </p>
+
+                  <img
+                    src={getGoogleDriveUrl(item["URL-Изображения"])}
+                    alt={item["Наименование"]}
+                  />
+
+                  <div className="quantity-controls">
+                    <button
+                      onClick={() => dispatch(changeEquipMinus({ id: itemId }))}
+                    >
+                      -
+                    </button>
+                    <span>{count} шт.</span>
+                    <button
+                      onClick={() => dispatch(changeEquipPlus({ id: itemId }))}
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <div className="price-inputs">
+                    <input
+                      type="number"
+                      value={item.price || ""}
+                      placeholder="Цена (₸)"
+                      onChange={(e) =>
+                        dispatch(
+                          changeEquipPrice({
+                            id: itemId,
+                            price: e.target.value,
+                          }),
+                        )
+                      }
+                    />
+                  </div>
+
+                  <div className="item-total">
+                    {/* Форматирование: 15000 -> 15 000 ₸ */}
+                    <p>
+                      Сумма:{" "}
+                      <strong>
+                        {totalItemPrice.toLocaleString("kk-KZ")} ₸
+                      </strong>
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Общий итог по всем позициям */}
+            <div
+              className="grand-total"
+              style={{
+                marginTop: "20px",
+                borderTop: "1px solid aqua",
+                paddingTop: "10px",
+              }}
+            >
+              <h3>
+                Итого к оплате:{" "}
+                {eqipItems
+                  .reduce((sum, item) => {
+                    const p = parseFloat(item.price) || 0;
+                    const c = item.count || 0;
+                    return sum + p * c;
+                  }, 0)
+                  .toLocaleString("kk-KZ")}{" "}
+                ₸
+              </h3>
             </div>
           </div>
           <div className="PDFInfo-content-body-services">

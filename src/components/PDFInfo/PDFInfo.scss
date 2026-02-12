@@ -27,6 +27,103 @@
           }
         }
       }
+      &-items {
+        margin: 20px auto;
+        width: 95%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        &-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 10px;
+          background-color: #f9f9f9; // Светлый фон для контраста
+          border-radius: 8px;
+          border: 1px solid #eee;
+          gap: 8px;
+
+          // Стили для названия (делаем его более компактным)
+          p:first-child {
+            flex: 2; // Занимает больше места
+            text-align: left;
+            font-size: 14px;
+            line-height: 1.2;
+            margin: 0;
+            word-break: break-word;
+          }
+
+          img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 4px;
+            background: #fff;
+          }
+
+          // Блок управления количеством
+          .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex: 1;
+            justify-content: center;
+
+            button {
+              width: 25px;
+              height: 25px;
+              border-radius: 50%;
+              border: 1px solid var(--tg-theme-button-color, aqua);
+              background: none;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: bold;
+            }
+
+            span {
+              font-size: 14px;
+              min-width: 20px;
+            }
+          }
+
+          // Поле ввода цены
+          input {
+            width: 70px;
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            text-align: center;
+            font-size: 13px;
+          }
+
+          // Итоговая сумма за позицию
+          .item-total {
+            flex: 1.5;
+            text-align: right;
+            font-size: 13px;
+
+            strong {
+              color: var(--tg-theme-button-color, green);
+              white-space: nowrap;
+            }
+          }
+        }
+        .grand-total {
+          margin: 20px auto;
+          width: 90%;
+          padding: 15px;
+          border-top: 2px solid aqua;
+          text-align: right;
+
+          h3 {
+            font-size: 18px;
+            margin: 0;
+          }
+        }
+      }
       &-services {
         &-title {
           margin: 20px 0;

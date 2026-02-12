@@ -26,9 +26,16 @@ const eqipSlice = createSlice({
         state[action.payload["id"]] = { ...action.payload, count: 1 };
       }
     },
+    changeEquipPrice: (state, action) => {
+      const item = state[action.payload["id"]];
+      if (item) {
+        item.price = action.payload["price"];
+      }
+    },
   },
 });
 
-export const { changeEquipMinus, changeEquipPlus } = eqipSlice.actions;
+export const { changeEquipMinus, changeEquipPlus, changeEquipPrice } =
+  eqipSlice.actions;
 
 export default eqipSlice.reducer;

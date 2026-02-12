@@ -3,30 +3,13 @@ import "./InfoMenu.scss";
 import SvgExit from "../../svg/exit/SvgExit";
 import { useDispatch, useSelector } from "react-redux";
 import { changeEquipMinus, changeEquipPlus } from "../../redux/eqipReducer";
+import getGoogleDriveUrl from "../../api/getGoogleImg";
 
 const InfoMenu = ({ element, setState }) => {
   const dispatch = useDispatch();
   const value = useSelector((state) => state.equip);
 
   // Функция для преобразования ссылки Google Drive в прямой URL для img
-  const getGoogleDriveUrl = (url) => {
-    if (!url || typeof url !== "string") return "";
-
-    if (url.includes("drive.google.com")) {
-      // Извлекаем ID файла более надежным способом через регулярное выражение
-      const match =
-        url.match(/\/d\/(.+?)\/(?:view|edit|usp=sharing)/) ||
-        url.match(/id=(.+?)(?:&|$)/);
-      const fileId = match ? match[1] : null;
-
-      if (fileId) {
-        // Используем thumbnail. sz=w1000 задает ширину (можно менять)
-        return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
-      }
-    }
-
-    return url;
-  };
 
   // Получаем текущее количество, используя id (из Google Script)
   const currentCount = value && value[element.id] ? value[element.id].count : 0;
@@ -55,7 +38,7 @@ const InfoMenu = ({ element, setState }) => {
                   console.error("Ошибка загрузки изображения:", e.target.src);
                   // Можно подставить ссылку на картинку-заглушку (placeholder)
                   e.target.src =
-                    "https://via.placeholder.com/300?text=No+Image";
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png";
                   e.target.style.display = "block"; // Убеждаемся, что заглушку видно
                 }}
                 style={{ display: "block", maxWidth: "100%", height: "auto" }}
