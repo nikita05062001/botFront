@@ -1,76 +1,94 @@
 .PDFInfo {
   position: fixed;
   inset: 0;
-  background-color: #f5f7fa;
+  // Используем вторичный фон Telegram для подложки
+  background-color: var(--tg-theme-secondary-bg-color);
   overflow-y: auto;
-  padding-bottom: 100px;
+  padding-bottom: 120px; // Запас под фиксированную кнопку
   font-family: sans-serif;
+  color: var(--tg-theme-text-color);
 
   &-content {
     .infoMenu-exit {
       padding: 15px;
       cursor: pointer;
+      color: var(--tg-theme-button-color); // Цвет акцента для выхода
     }
 
     &-title p {
       font-size: 18px;
       font-weight: bold;
       text-align: center;
-      color: #333;
+      color: var(--tg-theme-text-color);
+      margin: 10px 0;
     }
 
     &-body {
       display: flex;
       flex-direction: column;
       gap: 20px;
-      padding: 0 10px;
+      padding: 0 16px;
 
       // 1. Верхние инпуты
       &-inputs {
-        background: white;
+        background: var(--tg-theme-bg-color); // Основной фон карточки
         padding: 15px;
-        border-radius: 15px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border-radius: 12px;
+
         input {
           width: 100%;
           padding: 12px;
           margin-bottom: 8px;
-          border: 1px solid #eee;
+          background: var(--tg-theme-bg-color);
+          color: var(--tg-theme-text-color);
+          border: 1px solid var(--tg-theme-secondary-bg-color);
           border-radius: 10px;
           box-sizing: border-box;
+
+          &::placeholder {
+            color: var(--tg-theme-hint-color);
+          }
+
+          &:focus {
+            outline: none;
+            border-color: var(--tg-theme-button-color);
+          }
+
           &:last-child {
             margin-bottom: 0;
           }
         }
       }
 
-      // 2. Оборудование (Компактные строки)
+      // 2. Оборудование
       &-items {
         display: flex;
         flex-direction: column;
         gap: 10px;
 
         &-item {
-          background: white;
+          background: var(--tg-theme-bg-color);
           padding: 12px;
-          border-radius: 15px;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+          border-radius: 12px;
 
           .item-main-info {
             display: flex;
             align-items: center;
             gap: 12px;
             margin-bottom: 10px;
+
             img {
               width: 45px;
               height: 45px;
               object-fit: contain;
+              border-radius: 8px;
             }
+
             p {
               font-size: 14px;
               margin: 0;
               flex: 1;
-              text-align: left;
+              color: var(--tg-theme-text-color);
             }
           }
 
@@ -78,43 +96,48 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
 
             .quantity-controls {
               display: flex;
               align-items: center;
-              background: #f0f2f5;
+              background: var(--tg-theme-secondary-bg-color);
               border-radius: 20px;
               padding: 2px;
+
               button {
                 width: 28px;
                 height: 28px;
                 border: none;
-                background: white;
+                background: var(--tg-theme-bg-color);
+                color: var(--tg-theme-button-color);
                 border-radius: 50%;
                 cursor: pointer;
                 font-weight: bold;
               }
+
               span {
-                padding: 0 10px;
-                font-size: 13px;
+                padding: 0 12px;
+                font-size: 14px;
+                color: var(--tg-theme-text-color);
               }
             }
 
             input {
-              width: 80px;
+              width: 70px;
               padding: 6px;
-              border: 1px solid #eee;
+              background: var(--tg-theme-bg-color);
+              color: var(--tg-theme-text-color);
+              border: 1px solid var(--tg-theme-secondary-bg-color);
               border-radius: 8px;
               text-align: center;
             }
 
             .item-total {
               font-weight: bold;
-              color: #2ecc71;
+              color: var(
+                --tg-theme-link-color
+              ); // Используем цвет ссылок для цен
               font-size: 14px;
-              min-width: 80px;
-              text-align: right;
             }
           }
         }
@@ -122,45 +145,51 @@
         .grand-total {
           text-align: right;
           padding: 10px;
+          color: var(--tg-theme-text-color);
           span {
-            color: #2ecc71;
+            color: var(--tg-theme-link-color);
             font-weight: bold;
-            font-size: 18px;
+            font-size: 20px;
           }
         }
       }
 
-      // Общие заголовки секций
       .section-subtitle {
-        font-weight: bold;
-        margin: 15px 0 10px 5px;
-        color: #555;
-        text-align: left;
+        font-weight: 600;
+        margin: 10px 0 5px 5px;
+        color: var(--tg-theme-hint-color);
+        text-transform: uppercase;
+        font-size: 12px;
       }
 
       // 3. Услуги и Условия
       .service-card,
       .condition-card {
-        background: white;
+        background: var(--tg-theme-bg-color);
         padding: 15px;
-        border-radius: 15px;
-        margin-bottom: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        border-radius: 12px;
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 10px;
 
         .input-title {
           font-weight: bold;
+          background: transparent;
+          color: var(--tg-theme-text-color);
           border: none;
-          border-bottom: 1px solid #eee;
+          border-bottom: 1px solid var(--tg-theme-secondary-bg-color);
           padding: 5px 0;
           width: 100%;
+          &::placeholder {
+            color: var(--tg-theme-hint-color);
+          }
         }
+
         .input-desc {
           font-size: 13px;
+          background: transparent;
           border: none;
-          color: #666;
+          color: var(--tg-theme-hint-color);
           resize: none;
           font-family: inherit;
         }
@@ -168,62 +197,64 @@
         .service-pricing {
           display: flex;
           gap: 8px;
-          align-items: center;
           input {
             flex: 1;
             padding: 8px;
-            border: 1px solid #eee;
+            background: var(--tg-theme-secondary-bg-color);
+            color: var(--tg-theme-text-color);
+            border: none;
             border-radius: 8px;
           }
           .remove-btn {
-            background: #ff4d4f;
+            background: var(
+              --tg-theme-destructive-text-color
+            ); // Системный красный Telegram
             color: white;
             border: none;
             border-radius: 8px;
             padding: 8px 12px;
           }
         }
-
-        textarea {
-          width: 100%;
-          border: 1px solid #eee;
-          border-radius: 10px;
-          padding: 10px;
-          min-height: 60px;
-        }
       }
 
       .add-btn {
-        background: none;
-        border: 2px dashed #ccc;
-        color: #888;
+        background: transparent;
+        border: 2px dashed var(--tg-theme-hint-color);
+        color: var(--tg-theme-hint-color);
         padding: 12px;
-        border-radius: 15px;
+        border-radius: 12px;
         width: 100%;
-        cursor: pointer;
-        &:hover {
-          border-color: aqua;
-          color: aqua;
+        transition: all 0.2s;
+
+        &:active {
+          border-color: var(--tg-theme-button-color);
+          color: var(--tg-theme-button-color);
         }
       }
     }
 
-    // 4. Кнопка Оформить
+    // 4. Кнопка Оформить (Main Button Style)
     &-button {
       position: fixed;
       bottom: 20px;
-      left: 5%;
-      width: 90%;
-      background: #31b545;
-      padding: 18px;
-      border-radius: 15px;
+      left: 16px;
+      right: 16px;
+      background: var(--tg-theme-button-color);
+      padding: 16px;
+      border-radius: 12px;
       text-align: center;
-      box-shadow: 0 5px 20px rgba(49, 181, 69, 0.4);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
       a {
-        color: white;
+        color: var(--tg-theme-button-text-color);
         text-decoration: none;
-        font-weight: bold;
+        font-weight: 600;
         display: block;
+        font-size: 16px;
+      }
+
+      &:active {
+        opacity: 0.8;
       }
     }
   }
