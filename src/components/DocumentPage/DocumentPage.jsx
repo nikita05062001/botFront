@@ -1,10 +1,34 @@
 import React, { useState } from "react";
-import { pdf } from "@react-pdf/renderer";
+import { pdf, Font } from "@react-pdf/renderer";
 import { useTelegram } from "../../hooks/useTelegram";
 import { useSelector } from "react-redux";
 import PDFFile from "../PdfFile/PDFFile";
-import { useNavigate } from "react-router-dom"; // useNavigate лучше подходит для кнопок "Назад"
+import { useNavigate } from "react-router-dom";
 import "./DocumentPage.scss";
+
+// Импорт шрифтов (убедитесь, что пути верны)
+import CalibriRegular from "../../fonts/calibri.ttf";
+import CalibriBold from "../../fonts/calibriBold.ttf";
+import CalibriItalic from "../../fonts/calibriItalic.ttf";
+import CalibriBoldItalic from "../../fonts/calibriBoldItalic.ttf";
+
+// Регистрация шрифтов для react-pdf
+Font.register({
+  family: "Calibri",
+  src: CalibriRegular,
+});
+Font.register({
+  family: "CalibriBold",
+  src: CalibriBold,
+});
+Font.register({
+  family: "CalibriItalic",
+  src: CalibriItalic,
+});
+Font.register({
+  family: "CalibriBoldItalic",
+  src: CalibriBoldItalic,
+});
 
 const DocumentPage = () => {
   const { user, tg } = useTelegram();
@@ -19,6 +43,15 @@ const DocumentPage = () => {
   const itemsArr = Object.values(items);
   const servicesArr = Object.values(services);
 
+  // Универсальная функция уведомлений с проверкой версии Telegram
+  const notify = (message) => {
+    if (tg.isVersionAtLeast("6.2")) {
+      tg.showAlert(message);
+    } else {
+      alert(message); // Запасной вариант для старых версий (6.0)
+    }
+  };
+
   const sendPdfToTelegram = async (pdfBlob) => {
     const formData = new FormData();
     formData.append(
@@ -27,26 +60,33 @@ const DocumentPage = () => {
       `Offer_${info.title || "document"}.pdf`,
     );
 
-    // ВАЖНО: В продакшене лучше выносить токен на бэкенд
-    const url = `https://api.telegram.org/bot7170153136:AAFxOfSKrht_OzuVyZmomixX4KoHdefSWx8/sendDocument?chat_id=${user?.id || "989985866"}`;
+    // Токен бота (в идеале вынести на бэкенд)
+    const botToken = "7170153136:AAFxOfSKrht_OzuVyZmomixX4KoHdefSWx8";
+    const chatId = user?.id || "989985866";
+    const url = `https://api.telegram.org/bot${botToken}/sendDocument?chat_id=${chatId}`;
 
     try {
       const response = await fetch(url, { method: "POST", body: formData });
       if (response.ok) {
-        tg.showAlert("Документ успешно отправлен в ваш чат!");
+        notify("Документ успешно отправлен в ваш чат!");
       } else {
-        tg.showPopup({ message: "Ошибка при отправке файла." });
+        const errorData = await response.json();
+        console.error("Telegram API Error:", errorData);
+        notify("Ошибка API при отправке файла.");
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Network Error:", error);
+      notify("Сетевая ошибка при отправке.");
     }
   };
 
   const handleDownloadAndSend = async () => {
     if (isSending) return;
     setIsSending(true);
+
     try {
-      const blob = await pdf(
+      // Создаем компонент документа
+      const doc = (
         <PDFFile
           value={items}
           place={info.adres}
@@ -57,11 +97,17 @@ const DocumentPage = () => {
           miniDescription={info.description}
           services={services}
           conditions={conditions}
-        />,
-      ).toBlob();
+        />
+      );
+
+      // Генерируем Blob
+      const blob = await pdf(doc).toBlob();
+
+      // Отправляем
       await sendPdfToTelegram(blob);
     } catch (error) {
-      console.error(error);
+      console.error("PDF Generation Error:", error);
+      notify("Ошибка при создании PDF. Проверьте консоль браузера.");
     } finally {
       setIsSending(false);
     }
@@ -111,18 +157,20 @@ const DocumentPage = () => {
           ))}
         </section>
 
-        <section className="tma-section">
-          <h4 className="tma-section__title">Услуги</h4>
-          {servicesArr.map((el, index) => (
-            <div className="tma-cell tma-cell--multiline" key={index}>
-              <div className="tma-cell__main">
-                <span className="tma-cell__value">{el.title}</span>
-                <span className="tma-cell__sub">{el.description}</span>
+        {servicesArr.length > 0 && (
+          <section className="tma-section">
+            <h4 className="tma-section__title">Услуги</h4>
+            {servicesArr.map((el, index) => (
+              <div className="tma-cell tma-cell--multiline" key={index}>
+                <div className="tma-cell__main">
+                  <span className="tma-cell__value">{el.title}</span>
+                  <span className="tma-cell__sub">{el.description}</span>
+                </div>
+                <span className="tma-cell__value">{el.price}</span>
               </div>
-              <span className="tma-cell__value">${el.price}</span>
-            </div>
-          ))}
-        </section>
+            ))}
+          </section>
+        )}
       </div>
     </div>
   );

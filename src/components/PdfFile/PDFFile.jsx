@@ -50,7 +50,7 @@ const PDFFile = ({
   const items = Object.values(value);
   const countItems = items.length;
   const equipPrice = items.reduce(
-    (acc, item) => acc + item.Стоимость * item.count,
+    (acc, item) => acc + item.price * item.count,
     0,
   );
   services = Object.values(services);
@@ -143,17 +143,19 @@ const PDFFile = ({
                   </Text>
                 </View>
                 <View style={styles.bodyTableColDescription}>
-                  <Text style={styles.bodyTableCell}>{item["Описание"]}</Text>
+                  <Text style={styles.bodyTableCell}>
+                    {item["Описание краткое"]}
+                  </Text>
                 </View>
                 <View style={styles.bodyTableColCount}>
                   <Text style={styles.bodyTableCell}>{item.count}</Text>
                 </View>
                 <View style={styles.bodyTableColPrice}>
-                  <Text style={styles.bodyTableCell}>{item["Стоимость"]}</Text>
+                  <Text style={styles.bodyTableCell}>{item.price}</Text>
                 </View>
                 <View style={styles.bodyTableColAllPrice}>
                   <Text style={styles.bodyTableCell}>
-                    {+item["Стоимость"] * item.count}
+                    {+item.price * item.count}
                   </Text>
                 </View>
               </View>
