@@ -134,7 +134,21 @@ const PDFInfo = ({ setState }) => {
                   <div className="item-main-info">
                     <img
                       src={getGoogleDriveUrl(item["URL-Изображения"])}
-                      alt=""
+                      alt={item["Наименование"]}
+                      referrerPolicy="no-referrer" // ДОБАВЬТЕ ЭТУ СТРОКУ
+                      onError={(e) => {
+                        console.error(
+                          "Ошибка загрузки изображения:",
+                          e.target.src,
+                        );
+                        e.target.src =
+                          "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png";
+                      }}
+                      style={{
+                        display: "block",
+                        maxWidth: "100%",
+                        height: "auto",
+                      }}
                     />
                     <p>
                       <strong>{item["Наименование"]}</strong>

@@ -51,13 +51,13 @@ const PDFFile = ({
   const countItems = items.length;
   const equipPrice = items.reduce(
     (acc, item) => acc + item.Стоимость * item.count,
-    0
+    0,
   );
   services = Object.values(services);
   const servicesCount = services.length;
   const servicesPrice = services.reduce(
     (acc, item) => acc + item.price * item.count,
-    0
+    0,
   );
   const Footer = ({ pageNumber }) => (
     <View style={styles.footer}>

@@ -11,6 +11,9 @@ body {
 }
 .no-scroll {
   overflow: hidden;
+  /* .list {
+    display: none;
+  } */
 }
 .body {
   max-width: 420px;

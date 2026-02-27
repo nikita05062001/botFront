@@ -1,62 +1,138 @@
-.DocumentPage {
-  margin-top: 20px;
-  &-content {
+.document-page {
+  background-color: var(
+    --tg-theme-secondary-bg-color
+  ); // Серый фон как в настройках TG
+  min-height: 100vh;
+  padding-bottom: 40px;
+
+  &__header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
     display: flex;
-    justify-content: space-between;
-    padding: 0px 10px;
-    margin-bottom: 20px;
-    &-buttons {
-      &-pdf {
-        background-color: red;
-        color: white;
-        padding: 5px 10px;
-        border: none;
-        border-radius: 10px;
-      }
-    }
-    &-back {
-      background-color: blue;
-      color: white;
-      padding: 5px 10px;
-      border: none;
-      border-radius: 10px;
+    gap: 12px;
+    padding: 12px 16px;
+    background-color: var(--tg-theme-bg-color);
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+  }
+
+  &__content {
+    padding: 16px 0;
+  }
+}
+
+// Кнопки в стиле Telegram
+.btn-primary {
+  flex: 2;
+  background-color: var(--tg-theme-button-color);
+  color: var(--tg-theme-button-text-color);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:active {
+    opacity: 0.7;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btn-secondary {
+  flex: 1;
+  background-color: rgba(120, 120, 128, 0.1); // Полупрозрачный серый
+  color: var(--tg-theme-link-color);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:active {
+    background-color: rgba(120, 120, 128, 0.2);
+  }
+}
+
+// Компоненты Списка (как в Telegram)
+.tma-section {
+  margin-bottom: 24px;
+
+  &__title {
+    padding: 0 16px 8px;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: var(--tg-theme-hint-color);
+    font-weight: 400;
+  }
+}
+
+.tma-cell {
+  background-color: var(--tg-theme-bg-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 0.5px solid var(--tg-theme-secondary-bg-color);
+  font-size: 16px;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__label {
+    color: var(--tg-theme-hint-color);
+    margin-right: 12px;
+  }
+
+  &__value {
+    color: var(--tg-theme-text-color);
+    text-align: right;
+  }
+
+  &__hint {
+    color: var(--tg-theme-hint-color);
+    font-size: 14px;
+  }
+
+  &__sub {
+    display: block;
+    font-size: 13px;
+    color: var(--tg-theme-hint-color);
+    margin-top: 2px;
+  }
+
+  &--multiline {
+    align-items: flex-start;
+    .tma-cell__main {
+      text-align: left;
     }
   }
-  &-list {
-    text-align: center;
-    &-item {
-      &-title {
-        margin: 10px 0;
-      }
-    }
-    &-items {
-      margin-top: 10px;
-      &-equip {
-        &-title {
-          margin-bottom: 10px;
-        }
-        &-item {
-          padding: 5px 0px;
-        }
-      }
-      &-services {
-        &-title {
-          margin-top: 10px;
-          margin-bottom: 10px;
-        }
-        &-item {
-          padding: 5px 0px;
-        }
-      }
-      &-conditions {
-        &-title {
-          margin-top: 10px;
-          margin-bottom: 10px;
-        }
-        &-item {
-          padding: 5px 0px;
-        }
-      }
-    }
+}
+
+// Анимация загрузки
+.loading {
+  position: relative;
+  pointer-events: none;
+  &::after {
+    content: "";
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-left: 8px;
+    border: 2px solid white;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }

@@ -1,19 +1,13 @@
 const getGoogleDriveUrl = (url) => {
-  if (!url || typeof url !== "string") return "";
+  if (!url) return "";
+  const regExp = /[-\w]{25,}/;
+  const match = url.match(regExp);
+  const fileId = match ? match[0] : null;
 
-  if (url.includes("drive.google.com")) {
-    // Извлекаем ID файла более надежным способом через регулярное выражение
-    const match =
-      url.match(/\/d\/(.+?)\/(?:view|edit|usp=sharing)/) ||
-      url.match(/id=(.+?)(?:&|$)/);
-    const fileId = match ? match[1] : null;
-
-    if (fileId) {
-      // Используем thumbnail. sz=w1000 задает ширину (можно менять)
-      return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
-    }
+  if (fileId) {
+    // Попробуйте этот формат, он часто стабильнее для <img>
+    return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
   }
-
   return url;
 };
 export default getGoogleDriveUrl;

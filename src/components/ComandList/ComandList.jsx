@@ -170,7 +170,12 @@ const ComandList = () => {
         <ul>
           <li className="list-header">
             <div className="list-content-title">Наименование</div>
-            <div className="list-content-count">Кол-во</div>
+            <div
+              className="list-content-count"
+              style={{ background: "none", minWidth: "auto" }}
+            >
+              Кол-во
+            </div>
           </li>
           {!loading ? (
             filteredData.map((el) => {

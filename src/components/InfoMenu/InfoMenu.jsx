@@ -9,87 +9,79 @@ const InfoMenu = ({ element, setState }) => {
   const dispatch = useDispatch();
   const value = useSelector((state) => state.equip);
 
-  // Функция для преобразования ссылки Google Drive в прямой URL для img
-
-  // Получаем текущее количество, используя id (из Google Script)
   const currentCount = value && value[element.id] ? value[element.id].count : 0;
 
+  if (!element) return null;
+
   return (
-    <div className="infoMenu">
-      <div className="infoMenu-content">
-        <div className="infoMenu-content-window">
-          <div className="infoMenu-exit" onClick={() => setState(null)}>
-            <SvgExit fill={"aqua"} />
+    <div className="info-menu" onClick={() => setState(null)}>
+      {/* Останавливаем всплытие клика, чтобы окно не закрывалось при клике на него */}
+      <div className="info-menu__window" onClick={(e) => e.stopPropagation()}>
+        <button className="info-menu__exit" onClick={() => setState(null)}>
+          <SvgExit fill="var(--tg-theme-hint-color)" />
+        </button>
+
+        <header className="info-menu__header">
+          <h3 className="info-menu__title">{element["Наименование"]}</h3>
+        </header>
+
+        <div className="info-menu__body">
+          <div className="info-menu__img-container">
+            <img
+              src={getGoogleDriveUrl(element["URL-Изображения"])}
+              alt={element["Наименование"]}
+              referrerPolicy="no-referrer"
+              onError={(e) => {
+                e.target.src =
+                  "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png";
+              }}
+              className="info-menu__img"
+            />
           </div>
 
-          <div className="infoMenu-content-window-item">
-            <div className="infoMenu-content-window-item-title">
-              <h3>{element["Наименование"]}</h3>
+          <div className="info-menu__details">
+            <div className="info-menu__row">
+              <span>Модель:</span>
+              <strong>{element["Модель"] || "—"}</strong>
             </div>
-          </div>
-
-          <div className="infoMenu-content-window-item">
-            <div className="infoMenu-content-window-item-img">
-              <img
-                src={getGoogleDriveUrl(element["URL-Изображения"])}
-                alt={element["Наименование"]}
-                // Вместо полного скрытия, лучше показывать "битую" картинку или заглушку
-                onError={(e) => {
-                  console.error("Ошибка загрузки изображения:", e.target.src);
-                  // Можно подставить ссылку на картинку-заглушку (placeholder)
-                  e.target.src =
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png";
-                  e.target.style.display = "block"; // Убеждаемся, что заглушку видно
-                }}
-                style={{ display: "block", maxWidth: "100%", height: "auto" }}
-              />
+            <div className="info-menu__row">
+              <span>Производитель:</span>
+              <strong>{element["Производитель"] || "—"}</strong>
             </div>
+            <p className="info-menu__description">
+              {element["Описание краткое"] || "Нет описания"}
+            </p>
           </div>
 
-          <div className="infoMenu-content-window-item">
-            <div className="infoMenu-content-window-item-title">
-              <p>
-                <strong>Модель:</strong> {element["Модель"] || "—"}
-              </p>
-              <p>
-                <strong>Производитель:</strong>{" "}
-                {element["Производитель"] || "—"}
-              </p>
-              <p>
-                <strong>Описание:</strong> {element["Описание краткое"] || "—"}
-              </p>
+          <div className="info-menu__price-block">
+            <div className="info-menu__price">
+              <span>Оценочная:</span>
+              <strong>${element["Оценочная стоимость USD"] || 0}</strong>
             </div>
-          </div>
-
-          <div className="infoMenu-content-window-item">
-            <div className="infoMenu-content-window-item-title">
-              <p>
-                Оценочная стоимость: {element["Оценочная стоимость USD"] || 0}$
-              </p>
-              <p>Стоимость: {element["Стоимость USD"] || 0}$</p>
-            </div>
-          </div>
-
-          <div className="infoMenu-content-window-item">
-            <div className="infoMenu-content-window-item-change">
-              <p
-                className="infoMenu-content-window-item-change-minus"
-                onClick={() => dispatch(changeEquipMinus(element))}
-              >
-                -
-              </p>
-              <p className="infoMenu-content-window-item-change-value">
-                {currentCount}
-              </p>
-              <p
-                className="infoMenu-content-window-item-change-plus"
-                onClick={() => dispatch(changeEquipPlus(element))}
-              >
-                +
-              </p>
+            <div className="info-menu__price">
+              <span>Стоимость:</span>
+              <strong>${element["Стоимость USD"] || 0}</strong>
             </div>
           </div>
         </div>
+
+        <footer className="info-menu__footer">
+          <div className="counter-control">
+            <button
+              className="counter-control__btn"
+              onClick={() => dispatch(changeEquipMinus(element))}
+            >
+              –
+            </button>
+            <span className="counter-control__value">{currentCount}</span>
+            <button
+              className="counter-control__btn"
+              onClick={() => dispatch(changeEquipPlus(element))}
+            >
+              +
+            </button>
+          </div>
+        </footer>
       </div>
     </div>
   );
