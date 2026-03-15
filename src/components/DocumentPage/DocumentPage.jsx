@@ -86,6 +86,7 @@ const DocumentPage = () => {
 
     try {
       // Создаем компонент документа
+      console.log(items);
       const doc = (
         <PDFFile
           value={items}
