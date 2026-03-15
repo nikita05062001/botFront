@@ -6,29 +6,16 @@ import PDFFile from "../PdfFile/PDFFile";
 import { useNavigate } from "react-router-dom";
 import "./DocumentPage.scss";
 
-// Импорт шрифтов (убедитесь, что пути верны)
+// Импорт шрифтов
 import CalibriRegular from "../../fonts/calibri.ttf";
 import CalibriBold from "../../fonts/calibriBold.ttf";
 import CalibriItalic from "../../fonts/calibriItalic.ttf";
 import CalibriBoldItalic from "../../fonts/calibriBoldItalic.ttf";
 
-// Регистрация шрифтов для react-pdf
-Font.register({
-  family: "Calibri",
-  src: CalibriRegular,
-});
-Font.register({
-  family: "CalibriBold",
-  src: CalibriBold,
-});
-Font.register({
-  family: "CalibriItalic",
-  src: CalibriItalic,
-});
-Font.register({
-  family: "CalibriBoldItalic",
-  src: CalibriBoldItalic,
-});
+Font.register({ family: "Calibri", src: CalibriRegular });
+Font.register({ family: "CalibriBold", src: CalibriBold });
+Font.register({ family: "CalibriItalic", src: CalibriItalic });
+Font.register({ family: "CalibriBoldItalic", src: CalibriBoldItalic });
 
 const DocumentPage = () => {
   const { user, tg } = useTelegram();
@@ -43,12 +30,43 @@ const DocumentPage = () => {
   const itemsArr = Object.values(items);
   const servicesArr = Object.values(services);
 
-  // Универсальная функция уведомлений с проверкой версии Telegram
   const notify = (message) => {
     if (tg.isVersionAtLeast("6.2")) {
       tg.showAlert(message);
     } else {
-      alert(message); // Запасной вариант для старых версий (6.0)
+      alert(message);
+    }
+  };
+
+  // --- НОВАЯ ФУНКЦИЯ ДЛЯ ОБХОДА CORS ---
+  const fetchImageAsBase64 = async (url) => {
+    if (!url) return null;
+    try {
+      // 1. Извлекаем ID файла из ссылки Google Drive
+      const match = url.match(/(?:id=|d\/)([\w-]+)/);
+      const fileId = match ? match[1] : null;
+      if (!fileId) return null;
+
+      const directLink = `https://docs.google.com/uc?export=download&id=${fileId}`;
+
+      // 2. Используем прокси для загрузки данных (обходим CORS)
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(directLink)}`;
+
+      const response = await fetch(proxyUrl);
+      if (!response.ok) throw new Error("Failed to fetch");
+
+      const blob = await response.blob();
+
+      // 3. Конвертируем Blob в Base64 string
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    } catch (e) {
+      console.error("Ошибка при загрузке картинки:", e);
+      return null;
     }
   };
 
@@ -60,7 +78,6 @@ const DocumentPage = () => {
       `Offer_${info.title || "document"}.pdf`,
     );
 
-    // Токен бота (в идеале вынести на бэкенд)
     const botToken = "7170153136:AAFxOfSKrht_OzuVyZmomixX4KoHdefSWx8";
     const chatId = user?.id || "989985866";
     const url = `https://api.telegram.org/bot${botToken}/sendDocument?chat_id=${chatId}`;
@@ -70,12 +87,9 @@ const DocumentPage = () => {
       if (response.ok) {
         notify("Документ успешно отправлен в ваш чат!");
       } else {
-        const errorData = await response.json();
-        console.error("Telegram API Error:", errorData);
         notify("Ошибка API при отправке файла.");
       }
     } catch (error) {
-      console.error("Network Error:", error);
       notify("Сетевая ошибка при отправке.");
     }
   };
@@ -85,10 +99,18 @@ const DocumentPage = () => {
     setIsSending(true);
 
     try {
-      // Создаем компонент документа
+      // --- ПРЕ-ПРОЦЕССИНГ КАРТИНOK ---
+      // Загружаем все картинки в Base64 перед созданием PDF
+      const itemsWithImages = await Promise.all(
+        itemsArr.map(async (item) => {
+          const base64 = await fetchImageAsBase64(item["URL-Изображения"]);
+          return { ...item, imageBase64: base64 };
+        }),
+      );
+
       const doc = (
         <PDFFile
-          value={items}
+          value={itemsWithImages} // Передаем данные уже с картинками
           place={info.adres}
           date={info.date}
           dateSign={info.dateSign}
@@ -100,14 +122,11 @@ const DocumentPage = () => {
         />
       );
 
-      // Генерируем Blob
       const blob = await pdf(doc).toBlob();
-
-      // Отправляем
       await sendPdfToTelegram(blob);
     } catch (error) {
       console.error("PDF Generation Error:", error);
-      notify("Ошибка при создании PDF. Проверьте консоль браузера.");
+      notify("Ошибка при создании PDF.");
     } finally {
       setIsSending(false);
     }
@@ -124,7 +143,7 @@ const DocumentPage = () => {
           onClick={handleDownloadAndSend}
           disabled={isSending}
         >
-          {isSending ? "Генерация..." : "Отправить PDF"}
+          {isSending ? "Обработка фото..." : "Отправить PDF"}
         </button>
       </div>
 
@@ -139,10 +158,6 @@ const DocumentPage = () => {
             <span className="tma-cell__label">Адрес</span>
             <span className="tma-cell__value">{info.adres}</span>
           </div>
-          <div className="tma-cell">
-            <span className="tma-cell__label">Дата</span>
-            <span className="tma-cell__value">{info.date}</span>
-          </div>
         </section>
 
         <section className="tma-section">
@@ -156,21 +171,6 @@ const DocumentPage = () => {
             </div>
           ))}
         </section>
-
-        {servicesArr.length > 0 && (
-          <section className="tma-section">
-            <h4 className="tma-section__title">Услуги</h4>
-            {servicesArr.map((el, index) => (
-              <div className="tma-cell tma-cell--multiline" key={index}>
-                <div className="tma-cell__main">
-                  <span className="tma-cell__value">{el.title}</span>
-                  <span className="tma-cell__sub">{el.description}</span>
-                </div>
-                <span className="tma-cell__value">{el.price}</span>
-              </div>
-            ))}
-          </section>
-        )}
       </div>
     </div>
   );

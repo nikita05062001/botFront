@@ -94,26 +94,35 @@ const styles = StyleSheet.create({
     width: "4.9%",
     textAlign: "center",
   },
+  headerTableColImage: {
+    width: "20%",
+    textAlign: "center",
+    marginTop: 18,
+  },
+  bodyTableColImage: {
+    width: "20%",
+    textAlign: "center",
+  },
   headerTableColName: {
-    width: "25%",
+    width: "20%",
     textAlign: "left",
     marginTop: 18,
     paddingRight: 55,
   },
   bodyTableColName: {
-    width: "25%",
+    width: "20%",
     textAlign: "left",
     flexGrow: 1,
     flexWrap: "wrap", // Обеспечивает перенос текста на новую строку
     overflow: "hidden", // Скрывает текст, который не помещается в контейнер
   },
   headerTableColDescription: {
-    width: "40%",
+    width: "25%",
     marginTop: 18,
     textAlign: "center",
   },
   bodyTableColDescription: {
-    width: "40%",
+    width: "25%",
     flexWrap: "wrap", // Обеспечивает перенос текста на новую строку
     overflow: "hidden", // Скрывает текст, который не помещается в контейнер
   },
