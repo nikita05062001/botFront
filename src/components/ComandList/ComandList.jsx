@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import "./ComandList.scss";
 import axios from "axios";
 //@ts-ignore
@@ -17,34 +17,24 @@ const ComandList = () => {
     cat2: "",
     cat3: "",
   });
-  const [filteredData, setFilteredData] = useState([]);
-  const [categories, setCategories] = useState({});
 
   const dispatch = useDispatch();
-  // Достаем состояние корзины/оборудования из Redux
   const equipState = useSelector((state) => state.equip);
 
+  // Блокировка скролла при открытом меню
   useEffect(() => {
-    if (selectedElement) {
-      document.body.classList.add("no-scroll");
-    } else {
-      document.body.classList.remove("no-scroll");
-    }
-    return () => {
-      document.body.classList.remove("no-scroll");
-    };
+    document.body.classList.toggle("no-scroll", !!selectedElement);
+    return () => document.body.classList.remove("no-scroll");
   }, [selectedElement]);
 
+  // Загрузка данных
   useEffect(() => {
     const fetchList = async () => {
       try {
         const response = await axios.get(
           "https://script.google.com/macros/s/AKfycbx2FkcDqvjkdr8qfoChNUtbIzLzGy5-OSnwI0BOkKQ9gnOUsbZvme10qr3z7EWv05Qk/exec",
         );
-
-        // В новом JSON есть поле "id", используем его
-        const data = response.data.list;
-        setList(data);
+        setList(response.data.list || []);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -54,65 +44,69 @@ const ComandList = () => {
     fetchList();
   }, []);
 
-  // Логика формирования дерева категорий на основе Атрибутов
-  useEffect(() => {
-    if (!loading) {
-      const tempCategories = {};
+  // Формирование дерева категорий (через useMemo для оптимизации)
+  const categories = useMemo(() => {
+    const tree = {};
+    list.forEach((el) => {
+      // Ключевой момент: .trim() и проверка на наличие данных
+      const a = el["Атрибут А"]?.toString().trim() || "Без категории";
+      const b = el["Атрибут B"]?.toString().trim() || "Без категории";
+      const c = el["Атрибут C"]?.toString().trim() || "";
 
-      list.forEach((el) => {
-        // Добавляем проверку на существование значения, если его нет — ставим пустую строку
-        const a = (el["Атрибут A"] || "Без категории").toString();
-        const b = (el["Атрибут B"] || "Без категории").toString();
-        const c = el["Атрибут C"] ? el["Атрибут C"].toString().trim() : "";
+      if (!tree[a]) tree[a] = {};
+      if (!tree[a][b]) tree[a][b] = new Set(); // Используем Set для уникальности
 
-        if (!tempCategories[a]) tempCategories[a] = {};
-        if (!tempCategories[a][b]) tempCategories[a][b] = [];
+      if (c) tree[a][b].add(c);
+    });
 
-        // Добавляем в список только если C не пустой и его там еще нет
-        if (c !== "" && !tempCategories[a][b].includes(c)) {
-          tempCategories[a][b].push(c);
-        }
+    // Преобразуем Set обратно в массивы для удобства рендера
+    const finalTree = {};
+    Object.keys(tree).forEach((a) => {
+      finalTree[a] = {};
+      Object.keys(tree[a]).forEach((b) => {
+        finalTree[a][b] = Array.from(tree[a][b]);
       });
-      setCategories(tempCategories);
-    }
-  }, [loading, list]);
+    });
+    return finalTree;
+  }, [list]);
 
-  // Фильтрация
-  useEffect(() => {
-    if (!loading) {
-      const newFilteredData = list.filter((item) => {
-        const searchMatch = item["Наименование"]
-          ?.toLowerCase()
-          .includes(filters.search.toLowerCase());
-        const cat1Match = filters.cat1
-          ? item["Атрибут A"] === filters.cat1
-          : true;
-        const cat2Match = filters.cat2
-          ? item["Атрибут B"] === filters.cat2
-          : true;
-        const cat3Match = filters.cat3
-          ? item["Атрибут C"] === filters.cat3
-          : true;
-        return searchMatch && cat1Match && cat2Match && cat3Match;
-      });
-      setFilteredData(newFilteredData);
-    }
-  }, [loading, filters, list]);
+  // Фильтрация данных (через useMemo)
+  const filteredData = useMemo(() => {
+    return list.filter((item) => {
+      const name = item["Наименование"]?.toLowerCase() || "";
+      const searchMatch = name.includes(filters.search.toLowerCase());
+
+      const itemA = item["Атрибут А"]?.toString().trim() || "Без категории";
+      const itemB = item["Атрибут B"]?.toString().trim() || "Без категории";
+      const itemC = item["Атрибут C"]?.toString().trim() || "";
+
+      const cat1Match = !filters.cat1 || itemA === filters.cat1;
+      const cat2Match = !filters.cat2 || itemB === filters.cat2;
+      const cat3Match = !filters.cat3 || itemC === filters.cat3;
+
+      return searchMatch && cat1Match && cat2Match && cat3Match;
+    });
+  }, [list, filters]);
 
   const handleCategoryChange = (level, value) => {
     const newFilters = { ...filters, [`cat${level}`]: value };
-    for (let i = level + 1; i <= 3; i++) {
-      newFilters[`cat${i}`] = "";
+    // Сбрасываем дочерние фильтры при изменении родительского
+    if (level === 1) {
+      newFilters.cat2 = "";
+      newFilters.cat3 = "";
+    }
+    if (level === 2) {
+      newFilters.cat3 = "";
     }
     setFilters(newFilters);
   };
 
-  const getCategoryOptions = (level) => {
+  const getOptions = (level) => {
     if (level === 1) return Object.keys(categories);
     if (level === 2 && filters.cat1)
       return Object.keys(categories[filters.cat1] || {});
-    if (level === 3 && filters.cat2 && filters.cat1)
-      return categories[filters.cat1][filters.cat2] || [];
+    if (level === 3 && filters.cat2)
+      return categories[filters.cat1]?.[filters.cat2] || [];
     return [];
   };
 
@@ -126,14 +120,15 @@ const ComandList = () => {
           onChange={(e) => setFilters({ ...filters, search: e.target.value })}
         />
       </div>
+
       <div className="list-filters">
         <select
           value={filters.cat1}
           onChange={(e) => handleCategoryChange(1, e.target.value)}
         >
           <option value="">Атрибут A</option>
-          {getCategoryOptions(1).map((opt, i) => (
-            <option key={i} value={opt}>
+          {getOptions(1).map((opt) => (
+            <option key={opt} value={opt}>
               {opt}
             </option>
           ))}
@@ -145,8 +140,8 @@ const ComandList = () => {
           disabled={!filters.cat1}
         >
           <option value="">Атрибут B</option>
-          {getCategoryOptions(2).map((opt, i) => (
-            <option key={i} value={opt}>
+          {getOptions(2).map((opt) => (
+            <option key={opt} value={opt}>
               {opt}
             </option>
           ))}
@@ -158,8 +153,8 @@ const ComandList = () => {
           disabled={!filters.cat2}
         >
           <option value="">Атрибут C</option>
-          {getCategoryOptions(3).map((opt, i) => (
-            <option key={i} value={opt}>
+          {getOptions(3).map((opt) => (
+            <option key={opt} value={opt}>
               {opt}
             </option>
           ))}
@@ -177,15 +172,12 @@ const ComandList = () => {
               Кол-во
             </div>
           </li>
+
           {!loading ? (
             filteredData.map((el) => {
-              // ИСПОЛЬЗУЕМ ID ИЗ GOOGLE SCRIPT КАК КЛЮЧ
-              const itemId = el.id;
-              const currentCount =
-                equipState && equipState[itemId] ? equipState[itemId].count : 0;
-
+              const currentCount = equipState?.[el.id]?.count || 0;
               return (
-                <li key={itemId}>
+                <li key={el.id}>
                   <div
                     className="list-content-title"
                     onClick={() => setSelectedElement(el)}
@@ -218,6 +210,7 @@ const ComandList = () => {
           {error && <li className="error">Ошибка: {error}</li>}
         </ul>
       </div>
+
       {selectedElement && (
         <InfoMenu element={selectedElement} setState={setSelectedElement} />
       )}
