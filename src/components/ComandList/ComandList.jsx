@@ -44,22 +44,41 @@ const ComandList = () => {
     fetchList();
   }, []);
 
-  // Формирование дерева категорий (через useMemo для оптимизации)
+  // --- НОВОЕ: Группировка по наименованию и подсчет maxCount ---
+  const processedList = useMemo(() => {
+    const map = new Map();
+
+    list.forEach((item) => {
+      const name = item["Наименование"];
+      if (!name) return;
+
+      if (!map.has(name)) {
+        // Если такого имени еще нет, добавляем объект и ставим maxCount = 1
+        map.set(name, { ...item, maxCount: 1 });
+      } else {
+        // Если есть, просто увеличиваем счетчик
+        const existing = map.get(name);
+        existing.maxCount += 1;
+      }
+    });
+
+    return Array.from(map.values());
+  }, [list]);
+
+  // Формирование дерева категорий (теперь используем processedList)
   const categories = useMemo(() => {
     const tree = {};
-    list.forEach((el) => {
-      // Ключевой момент: .trim() и проверка на наличие данных
+    processedList.forEach((el) => {
       const a = el["Атрибут А"]?.toString().trim() || "Без категории";
       const b = el["Атрибут B"]?.toString().trim() || "Без категории";
       const c = el["Атрибут C"]?.toString().trim() || "";
 
       if (!tree[a]) tree[a] = {};
-      if (!tree[a][b]) tree[a][b] = new Set(); // Используем Set для уникальности
+      if (!tree[a][b]) tree[a][b] = new Set();
 
       if (c) tree[a][b].add(c);
     });
 
-    // Преобразуем Set обратно в массивы для удобства рендера
     const finalTree = {};
     Object.keys(tree).forEach((a) => {
       finalTree[a] = {};
@@ -68,11 +87,11 @@ const ComandList = () => {
       });
     });
     return finalTree;
-  }, [list]);
+  }, [processedList]);
 
-  // Фильтрация данных (через useMemo)
+  // Фильтрация данных (теперь используем processedList)
   const filteredData = useMemo(() => {
-    return list.filter((item) => {
+    return processedList.filter((item) => {
       const name = item["Наименование"]?.toLowerCase() || "";
       const searchMatch = name.includes(filters.search.toLowerCase());
 
@@ -86,11 +105,10 @@ const ComandList = () => {
 
       return searchMatch && cat1Match && cat2Match && cat3Match;
     });
-  }, [list, filters]);
+  }, [processedList, filters]);
 
   const handleCategoryChange = (level, value) => {
     const newFilters = { ...filters, [`cat${level}`]: value };
-    // Сбрасываем дочерние фильтры при изменении родительского
     if (level === 1) {
       newFilters.cat2 = "";
       newFilters.cat3 = "";
@@ -169,13 +187,16 @@ const ComandList = () => {
               className="list-content-count"
               style={{ background: "none", minWidth: "auto" }}
             >
-              Кол-во
+              Кол-во / Макс
             </div>
           </li>
 
           {!loading ? (
             filteredData.map((el) => {
               const currentCount = equipState?.[el.id]?.count || 0;
+              // ПРОВЕРКА: превышен ли лимит
+              const isOverLimit = currentCount > el.maxCount;
+
               return (
                 <li key={el.id}>
                   <div
@@ -183,6 +204,15 @@ const ComandList = () => {
                     onClick={() => setSelectedElement(el)}
                   >
                     {el["Наименование"]}
+                    <span
+                      style={{
+                        fontSize: "10px",
+                        opacity: 0.6,
+                        marginLeft: "8px",
+                      }}
+                    >
+                      (Доступно: {el.maxCount})
+                    </span>
                   </div>
                   <div className="list-content-count">
                     <div
@@ -191,7 +221,11 @@ const ComandList = () => {
                     >
                       -
                     </div>
-                    <div className="list-content-count-value">
+                    <div
+                      className="list-content-count-value"
+                      // ПРИМЕНЕНИЕ ЦВЕТА: красный если превышено
+                      style={{ color: isOverLimit ? "red" : "inherit" }}
+                    >
                       {currentCount}
                     </div>
                     <div
