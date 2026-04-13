@@ -2,9 +2,13 @@ import { StyleSheet } from "@react-pdf/renderer";
 
 const styles = StyleSheet.create({
   page: {
-    padding: 30,
+    backgroundColor: "white",
+    color: "black",
+    paddingTop: 30,
+    paddingLeft: 40,
+    paddingBottom: 30,
+    paddingRight: 30,
     fontFamily: "Calibri",
-    backgroundColor: "#fff",
   },
   header: {
     flexDirection: "row",
@@ -13,67 +17,56 @@ const styles = StyleSheet.create({
   },
   headetText: {
     fontFamily: "CalibriBold",
-    fontSize: 20,
-    textTransform: "uppercase",
+    fontSize: 18,
   },
   logoImage: {
     width: 120,
-    marginRight: 40,
+    marginRight: 30,
   },
   headerTitle: {
-    borderBottom: "2px solid #000",
-    paddingBottom: 5,
-    marginBottom: 10,
+    marginTop: 10,
   },
   headerContent: {
     fontSize: 11,
-    marginTop: 10,
-    lineHeight: 1.4,
+    lineHeight: 1.5,
   },
   table: {
+    marginTop: 20,
     display: "table",
-    width: "100%",
-    marginTop: 10,
+    width: "auto",
   },
   headerTableRow: {
     flexDirection: "row",
-    alignItems: "center",
-    borderBottomWidth: 1,
     borderBottomColor: "#000",
-    minHeight: 25,
+    borderBottomWidth: 1,
+    alignItems: "center",
+    height: 24,
   },
   bodyTableRow: {
     flexDirection: "row",
-    alignItems: "center",
+    borderBottomColor: "#EEE",
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    alignItems: "center",
     minHeight: 40,
-    paddingVertical: 4,
+    paddingVertical: 5,
   },
   TableRowColorGrey: {
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#F9F9F9",
   },
   TableColTitle: {
-    width: "100%",
+    fontSize: 12,
+    fontFamily: "CalibriBold",
+    marginVertical: 5,
     textAlign: "center",
-    fontFamily: "CalibriBold",
-  },
-  BoldText: {
-    fontFamily: "CalibriBold",
+    width: "100%",
   },
   FinishBlock: {
     marginTop: 30,
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  SignImage: {
-    width: 60,
-    height: "auto",
-  },
-  ShtampImage: {
-    width: 100,
-    height: "auto",
-  },
+  SignImage: { width: 60 },
+  ShtampImage: { width: 100 },
 });
 
 export default styles;

@@ -2,22 +2,6 @@ import React from "react";
 import { Page, Text, Image, Document, View, Font } from "@react-pdf/renderer";
 import styles from "./PDFstyles";
 
-// Импорт шрифтов
-import MyCustomFont from "../../fonts/calibri.ttf";
-import MyCustomFontBold from "../../fonts/calibriBold.ttf";
-
-Font.register({ family: "Calibri", src: MyCustomFont });
-Font.register({ family: "CalibriBold", src: MyCustomFontBold });
-
-const getDirectDriveUrl = (url) => {
-  if (!url) return null;
-  const match = url.match(/\/d\/([^/]+)/);
-  if (match && match[1]) {
-    return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-  }
-  return url;
-};
-
 const EquipmentListPDF = ({
   value = {},
   place = "г. Астана",
@@ -26,39 +10,48 @@ const EquipmentListPDF = ({
 }) => {
   const items = Object.values(value);
 
+  const getDirectDriveUrl = (url) => {
+    if (!url) return null;
+    const match = url.match(/\/d\/([^/]+)/);
+    if (match && match[1]) {
+      return `https://lh3.googleusercontent.com/u/0/d/${match[1]}`;
+    }
+    return url;
+  };
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <View style={[styles.headerTitle, { marginBottom: 10 }]}>
+        <View style={styles.headerTitle}>
           <Text style={styles.headetText}>СПИСОК ОБОРУДОВАНИЯ</Text>
         </View>
 
-        <View style={[styles.headerContent, { marginLeft: 0, marginTop: 10 }]}>
-          <Text>Дата мероприятия: {date}</Text>
+        <View style={[styles.headerContent, { marginTop: 10 }]}>
           <Text>Место проведения: {place}</Text>
+          <Text>Дата мероприятия: {date}</Text>
         </View>
 
         <View style={styles.table}>
-          {/* Header Table */}
+          {/* Шапка таблицы — один в один как в КП */}
           <View style={[styles.headerTableRow, styles.TableRowColorGrey]}>
-            <View style={styles.headerTableColId}>
-              <Text>№</Text>
+            <View style={{ width: "5%", textAlign: "center" }}>
+              <Text style={styles.headerTableCell}>№</Text>
             </View>
-            <View style={styles.headerTableColImage}>
-              <Text>Фото</Text>
+            <View style={{ width: "15%", textAlign: "center" }}>
+              <Text style={styles.headerTableCell}>Фото</Text>
             </View>
-            <View style={styles.headerTableColName}>
-              <Text>Наименование</Text>
+            <View style={{ width: "40%", textAlign: "left", paddingLeft: 5 }}>
+              <Text style={styles.headerTableCell}>Наименование</Text>
             </View>
-            <View style={[styles.headerTableColDescription, { width: "40%" }]}>
-              <Text>Описание</Text>
+            <View style={{ width: "30%", textAlign: "left" }}>
+              <Text style={styles.headerTableCell}>Описание</Text>
             </View>
-            <View style={styles.headerTableColCount}>
-              <Text>Кол</Text>
+            <View style={{ width: "10%", textAlign: "center" }}>
+              <Text style={styles.headerTableCell}>Кол</Text>
             </View>
           </View>
 
-          {/* Table Body */}
+          {/* Строки оборудования */}
           {items.map((item, index) => (
             <View
               key={index}
@@ -68,14 +61,14 @@ const EquipmentListPDF = ({
               ]}
               wrap={false}
             >
-              <View style={styles.bodyTableColId}>
+              <View style={{ width: "5%", textAlign: "center" }}>
                 <Text style={styles.bodyTableCell}>{index + 1}</Text>
               </View>
 
-              <View style={styles.bodyTableColImage}>
+              <View style={{ width: "15%", padding: 2 }}>
                 {item["URL-Изображения"] ? (
                   <Image
-                    style={{ width: "100%", height: "auto", maxHeight: 70 }}
+                    style={{ width: "100%", height: "auto" }}
                     src={getDirectDriveUrl(item["URL-Изображения"])}
                   />
                 ) : (
@@ -83,29 +76,21 @@ const EquipmentListPDF = ({
                 )}
               </View>
 
-              <View style={styles.bodyTableColName}>
-                <Text style={styles.bodyTableCell}>{item["Наименование"]}</Text>
-              </View>
-
-              <View style={[styles.bodyTableColDescription, { width: "40%" }]}>
-                <Text style={styles.bodyTableCell}>
-                  {item["Описание краткое"]}
+              <View style={{ width: "40%", paddingLeft: 5 }}>
+                <Text style={{ fontSize: 10, fontFamily: "CalibriBold" }}>
+                  {item["Наименование"]}
                 </Text>
               </View>
 
-              <View style={styles.bodyTableColCount}>
+              <View style={{ width: "30%", paddingHorizontal: 5 }}>
+                <Text style={{ fontSize: 9 }}>{item["Описание краткое"]}</Text>
+              </View>
+
+              <View style={{ width: "10%", textAlign: "center" }}>
                 <Text style={styles.bodyTableCell}>{item.count}</Text>
               </View>
             </View>
           ))}
-        </View>
-
-        <View
-          style={{ marginTop: 30, borderTop: "1px solid #EEE", paddingTop: 10 }}
-        >
-          <Text style={{ fontSize: 9, color: "grey", textAlign: "center" }}>
-            Документ сформирован автоматически для внутреннего использования.
-          </Text>
         </View>
       </Page>
     </Document>
