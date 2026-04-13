@@ -65,6 +65,7 @@ const DocumentPage = () => {
     setIsSending(true);
 
     try {
+<<<<<<< HEAD
       let doc;
       let fileName = "";
 
@@ -94,6 +95,22 @@ const DocumentPage = () => {
           />
         );
       }
+=======
+      // Создаем компонент документа
+      const doc = (
+        <PDFFile
+          value={items}
+          place={info.adres}
+          date={info.date}
+          dateSign={info.dateSign}
+          discount={info.discount}
+          titleTable={info.title}
+          miniDescription={info.description}
+          services={services}
+          conditions={conditions}
+        />
+      );
+>>>>>>> parent of 5445153 (Working photo 15.03.2026)
 
       const blob = await pdf(doc).toBlob();
       await sendPdfToTelegram(blob, fileName);
