@@ -30,13 +30,14 @@
 
   // Блок фильтров
   &-filters {
+    display: flex;
+    gap: 8px;
     margin-bottom: 20px;
     overflow-x: auto;
     padding-bottom: 4px;
 
     select {
-      width: 100%;
-      margin-bottom: 10px;
+      flex: 1;
       padding: 8px;
       border-radius: 8px;
       border: none;
@@ -48,9 +49,6 @@
 
       &:disabled {
         opacity: 0.5;
-      }
-      &:last-child {
-        margin-bottom: 0;
       }
     }
   }
