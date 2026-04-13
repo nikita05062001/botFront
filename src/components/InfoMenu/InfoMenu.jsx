@@ -9,13 +9,16 @@ const InfoMenu = ({ element, setState }) => {
   const dispatch = useDispatch();
   const value = useSelector((state) => state.equip);
 
+  // Получаем текущее количество из Redux
   const currentCount = value && value[element.id] ? value[element.id].count : 0;
+
+  // Проверка на превышение лимита
+  const isOverLimit = currentCount > (element.maxCount || 0);
 
   if (!element) return null;
 
   return (
     <div className="info-menu" onClick={() => setState(null)}>
-      {/* Останавливаем всплытие клика, чтобы окно не закрывалось при клике на него */}
       <div className="info-menu__window" onClick={(e) => e.stopPropagation()}>
         <button className="info-menu__exit" onClick={() => setState(null)}>
           <SvgExit fill="var(--tg-theme-hint-color)" />
@@ -48,6 +51,12 @@ const InfoMenu = ({ element, setState }) => {
               <span>Производитель:</span>
               <strong>{element["Производитель"] || "—"}</strong>
             </div>
+            {/* НОВОЕ: Отображение доступного количества */}
+            <div className="info-menu__row">
+              <span>В наличии (всего):</span>
+              <strong>{element.maxCount || 1} шт.</strong>
+            </div>
+
             <p className="info-menu__description">
               {element["Описание краткое"] || "Нет описания"}
             </p>
@@ -73,7 +82,15 @@ const InfoMenu = ({ element, setState }) => {
             >
               –
             </button>
-            <span className="counter-control__value">{currentCount}</span>
+            {/* ПРИМЕНЕНИЕ ЦВЕТА: Красный, если превышен лимит */}
+            <span
+              className="counter-control__value"
+              style={{
+                color: isOverLimit ? "#ff4d4f" : "var(--tg-theme-text-color)",
+              }}
+            >
+              {currentCount}
+            </span>
             <button
               className="counter-control__btn"
               onClick={() => dispatch(changeEquipPlus(element))}
@@ -81,6 +98,20 @@ const InfoMenu = ({ element, setState }) => {
               +
             </button>
           </div>
+          {/* Подсказка, если превышено */}
+          {isOverLimit && (
+            <div
+              style={{
+                color: "#ff4d4f",
+                fontSize: "12px",
+                textAlign: "center",
+                marginTop: "8px",
+                fontWeight: "500",
+              }}
+            >
+              Внимание: превышен лимит (макс: {element.maxCount})
+            </div>
+          )}
         </footer>
       </div>
     </div>

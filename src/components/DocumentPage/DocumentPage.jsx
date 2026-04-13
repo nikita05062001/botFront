@@ -3,21 +3,32 @@ import { pdf, Font } from "@react-pdf/renderer";
 import { useTelegram } from "../../hooks/useTelegram";
 import { useSelector } from "react-redux";
 import PDFFile from "../PdfFile/PDFFile";
-import EquipmentListPDF from "../EquipmentListPDF/EquipmentListPDF";
 import { useNavigate } from "react-router-dom";
 import "./DocumentPage.scss";
 
-// Импорт шрифтов
+// Импорт шрифтов (убедитесь, что пути верны)
 import CalibriRegular from "../../fonts/calibri.ttf";
 import CalibriBold from "../../fonts/calibriBold.ttf";
 import CalibriItalic from "../../fonts/calibriItalic.ttf";
 import CalibriBoldItalic from "../../fonts/calibriBoldItalic.ttf";
 
-// Регистрация шрифтов
-Font.register({ family: "Calibri", src: CalibriRegular });
-Font.register({ family: "CalibriBold", src: CalibriBold });
-Font.register({ family: "CalibriItalic", src: CalibriItalic });
-Font.register({ family: "CalibriBoldItalic", src: CalibriBoldItalic });
+// Регистрация шрифтов для react-pdf
+Font.register({
+  family: "Calibri",
+  src: CalibriRegular,
+});
+Font.register({
+  family: "CalibriBold",
+  src: CalibriBold,
+});
+Font.register({
+  family: "CalibriItalic",
+  src: CalibriItalic,
+});
+Font.register({
+  family: "CalibriBoldItalic",
+  src: CalibriBoldItalic,
+});
 
 const DocumentPage = () => {
   const { user, tg } = useTelegram();
@@ -32,18 +43,24 @@ const DocumentPage = () => {
   const itemsArr = Object.values(items);
   const servicesArr = Object.values(services);
 
+  // Универсальная функция уведомлений с проверкой версии Telegram
   const notify = (message) => {
     if (tg.isVersionAtLeast("6.2")) {
       tg.showAlert(message);
     } else {
-      alert(message);
+      alert(message); // Запасной вариант для старых версий (6.0)
     }
   };
 
-  const sendPdfToTelegram = async (pdfBlob, fileName) => {
+  const sendPdfToTelegram = async (pdfBlob) => {
     const formData = new FormData();
-    formData.append("document", pdfBlob, fileName);
+    formData.append(
+      "document",
+      pdfBlob,
+      `Offer_${info.title || "document"}.pdf`,
+    );
 
+    // Токен бота (в идеале вынести на бэкенд)
     const botToken = "7170153136:AAFxOfSKrht_OzuVyZmomixX4KoHdefSWx8";
     const chatId = user?.id || "989985866";
     const url = `https://api.telegram.org/bot${botToken}/sendDocument?chat_id=${chatId}`;
@@ -53,50 +70,23 @@ const DocumentPage = () => {
       if (response.ok) {
         notify("Документ успешно отправлен в ваш чат!");
       } else {
+        const errorData = await response.json();
+        console.error("Telegram API Error:", errorData);
         notify("Ошибка API при отправке файла.");
       }
     } catch (error) {
+      console.error("Network Error:", error);
       notify("Сетевая ошибка при отправке.");
     }
   };
 
-  const handleGenerate = async (type) => {
+  const handleDownloadAndSend = async () => {
     if (isSending) return;
     setIsSending(true);
 
     try {
-<<<<<<< HEAD
-      let doc;
-      let fileName = "";
-
-      if (type === "offer") {
-        fileName = `Offer_${info.title || "CP"}.pdf`;
-        doc = (
-          <PDFFile
-            value={items}
-            place={info.adres}
-            date={info.date}
-            dateSign={info.dateSign}
-            discount={info.discount}
-            titleTable={info.title}
-            miniDescription={info.description}
-            services={services}
-            conditions={conditions}
-          />
-        );
-      } else {
-        fileName = `List_${info.title || "Equipment"}.pdf`;
-        doc = (
-          <EquipmentListPDF
-            value={items}
-            place={info.adres}
-            date={info.date}
-            titleTable={info.title}
-          />
-        );
-      }
-=======
       // Создаем компонент документа
+      console.log(items);
       const doc = (
         <PDFFile
           value={items}
@@ -110,13 +100,15 @@ const DocumentPage = () => {
           conditions={conditions}
         />
       );
->>>>>>> parent of 5445153 (Working photo 15.03.2026)
 
+      // Генерируем Blob
       const blob = await pdf(doc).toBlob();
-      await sendPdfToTelegram(blob, fileName);
+
+      // Отправляем
+      await sendPdfToTelegram(blob);
     } catch (error) {
       console.error("PDF Generation Error:", error);
-      notify("Ошибка при создании PDF.");
+      notify("Ошибка при создании PDF. Проверьте консоль браузера.");
     } finally {
       setIsSending(false);
     }
@@ -128,22 +120,13 @@ const DocumentPage = () => {
         <button className="btn-secondary" onClick={() => navigate(-1)}>
           Назад
         </button>
-        <div className="document-page__actions">
-          <button
-            className={`btn-primary ${isSending ? "loading" : ""}`}
-            onClick={() => handleGenerate("offer")}
-            disabled={isSending}
-          >
-            {isSending ? "..." : "Коммерческое"}
-          </button>
-          <button
-            className={`btn-primary btn-list ${isSending ? "loading" : ""}`}
-            onClick={() => handleGenerate("list")}
-            disabled={isSending}
-          >
-            {isSending ? "..." : "Список оборудования"}
-          </button>
-        </div>
+        <button
+          className={`btn-primary ${isSending ? "loading" : ""}`}
+          onClick={handleDownloadAndSend}
+          disabled={isSending}
+        >
+          {isSending ? "Генерация..." : "Отправить PDF"}
+        </button>
       </div>
 
       <div className="document-page__content">
